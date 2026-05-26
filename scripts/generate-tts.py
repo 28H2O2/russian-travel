@@ -33,6 +33,7 @@ VOICE = "ru-RU-SvetlanaNeural"   # 女声、友好正向，旅游场景最自然
 RATE_NORMAL = "+0%"
 RATE_SLOW = "-30%"               # 慢档放慢 30% 便于跟读
 CONCURRENCY = 8                  # 同时跑 8 个 TTS 任务
+SKIP_EXISTING = True             # mp3 已存在则不重新合成（增量补卡时省时省钱）
 
 # ---------------------------------------------------------------- 工具
 
@@ -58,13 +59,17 @@ async def main() -> int:
     completed = 0
     total = len(cards) * 2
 
+    skipped = 0
+
     async def one(text: str, out: Path, rate: str, label: str) -> None:
         nonlocal completed
+        if SKIP_EXISTING and out.exists() and out.stat().st_size > 0:
+            return  # 已存在的 mp3 跳过，留给增量补卡用
         async with sem:
             try:
                 await synthesize(text, VOICE, rate, out)
                 completed += 1
-                print(f"  [{completed:>2}/{total}] {label}  {out.name}")
+                print(f"  [{completed:>3}] {label}  {out.name}")
             except Exception as exc:  # noqa: BLE001
                 print(f"  ✗ FAIL {out.name}: {exc}", file=sys.stderr)
 
@@ -73,13 +78,21 @@ async def main() -> int:
         text = card["cyrillic"]
         normal_out = rel_to_abs(card["audio"]["phrase_normal"])
         slow_out = rel_to_abs(card["audio"]["phrase_slow"])
+        # 预先统计跳过数量（不入任务队列，print 才显示完整概况）
+        if SKIP_EXISTING:
+            if normal_out.exists() and normal_out.stat().st_size > 0:
+                skipped += 1
+            if slow_out.exists() and slow_out.stat().st_size > 0:
+                skipped += 1
         tasks.append(asyncio.create_task(one(text, normal_out, RATE_NORMAL, "normal")))
         tasks.append(asyncio.create_task(one(text, slow_out, RATE_SLOW, "slow  ")))
 
-    print(f"生成 {total} 个俄语 TTS（voice={VOICE}, 并发={CONCURRENCY}）...")
+    print(f"生成 {total} 个俄语 TTS（voice={VOICE}, 并发={CONCURRENCY}, skip_existing={SKIP_EXISTING}）")
+    if SKIP_EXISTING:
+        print(f"  其中 {skipped} 个已存在、将跳过；实际需要合成 {total - skipped} 个")
     await asyncio.gather(*tasks)
-    print(f"\n完成。{completed}/{total} 个 mp3 写入 public/audio/")
-    return 0 if completed == total else 1
+    print(f"\n完成。新合成 {completed} 个 mp3（跳过 {skipped} 个）写入 public/audio/")
+    return 0
 
 
 if __name__ == "__main__":
