@@ -1,0 +1,100 @@
+---
+// 功能：音频按钮。点击后用 HTMLAudioElement 播放给定路径的 mp3
+// 输入：src (mp3 路径), label (按钮文字, 如 "正常" / "慢")
+// 输出：一个圆角按钮 + 内联 <script> 处理点击
+// 依赖：无
+// 在项目中的作用：所有卡片、所有展开的 likely_responses / slots 共用的发音入口
+// 注意：v1 阶段音频文件是 silent stub；W2 用 Yandex SpeechKit 真生成
+
+interface Props {
+  src: string;
+  label?: string;
+  variant?: 'normal' | 'slow';
+}
+
+const { src, label = '🔊', variant = 'normal' } = Astro.props;
+
+const cls =
+  variant === 'slow'
+    ? 'bg-amber-50 border-amber-300 text-amber-800 hover:bg-amber-100'
+    : 'bg-stone-100 border-stone-300 text-stone-700 hover:bg-stone-200';
+---
+
+<button
+  type="button"
+  class={`audio-btn relative inline-flex items-center gap-1 px-2 py-1 text-xs font-sans border rounded-md transition-all duration-150 ${cls}`}
+  data-audio-src={src}
+  aria-label={`播放 ${label}`}
+>
+  <span class="audio-icon" aria-hidden="true">🔊</span>
+  <span>{label}</span>
+  <span class="audio-pulse pointer-events-none absolute inset-0 rounded-md ring-2 ring-transparent"></span>
+</button>
+
+<script>
+  // 功能：全局音频播放事件委托 + 视觉反馈
+  // - 点击任意 .audio-btn 时，复用单个 HTMLAudioElement 播放
+  // - 当前播放的按钮加 playing class（CSS 控制脉冲与高亮）
+  // - 同一按钮再点 = 重播；点别的按钮 = 切换
+  // - 播放结束 / error 自动清理 playing 状态
+  const player = new Audio();
+  let activeBtn: HTMLButtonElement | null = null;
+
+  const clearActive = () => {
+    if (activeBtn) {
+      activeBtn.classList.remove('playing');
+      activeBtn = null;
+    }
+  };
+
+  player.addEventListener('ended', clearActive);
+  player.addEventListener('error', clearActive);
+  player.addEventListener('pause', () => {
+    // 仅在非主动切换的暂停清理（切换时 src 已变 → ended 之外会先触发 pause）
+    if (player.ended || player.currentTime === 0) clearActive();
+  });
+
+  document.addEventListener('click', (e) => {
+    const target = e.target as HTMLElement;
+    const btn = target.closest<HTMLButtonElement>('.audio-btn');
+    if (!btn) return;
+    const src = btn.dataset.audioSrc;
+    if (!src) return;
+    e.preventDefault();
+
+    clearActive();
+    btn.classList.add('playing');
+    activeBtn = btn;
+
+    if (player.src.endsWith(src)) {
+      player.currentTime = 0;
+    } else {
+      player.src = src;
+    }
+    player.play().catch((err) => {
+      console.warn('[audio] play failed:', err);
+      clearActive();
+    });
+  });
+</script>
+
+<style is:global>
+  /* 播放中视觉反馈：按钮高亮 + 外圈脉冲 + icon 微跳 */
+  .audio-btn.playing {
+    transform: scale(0.97);
+  }
+  .audio-btn.playing .audio-pulse {
+    animation: audio-ring 600ms ease-out infinite;
+  }
+  .audio-btn.playing .audio-icon {
+    animation: audio-icon-pulse 400ms ease-in-out infinite alternate;
+  }
+  @keyframes audio-ring {
+    0%   { box-shadow: 0 0 0 0    rgba(196, 102, 31, 0.45); }
+    100% { box-shadow: 0 0 0 8px  rgba(196, 102, 31, 0);    }
+  }
+  @keyframes audio-icon-pulse {
+    from { transform: scale(1);    }
+    to   { transform: scale(1.18); }
+  }
+</style>

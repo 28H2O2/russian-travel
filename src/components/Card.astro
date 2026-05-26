@@ -1,0 +1,207 @@
+---
+// 功能：单张俄语短语卡。折叠态显示 cyrillic / 音译 / 中文 / 音频按钮；
+//       展开态额外显示 字面直译 / register / likely_responses / slots / local_note。
+//       展开/折叠用 grid-template-rows 0fr↔1fr 做真实 height 动画 + opacity fade。
+// 输入：card prop (Card 类型)
+// 输出：一个 <article class="card-surface" data-expanded="false">
+// 依赖：types, AudioButton, PolitenessBadge
+// 在项目中的作用：本项目的视觉灵魂——所有功能都为这张卡服务
+
+import type { Card } from '../lib/types';
+import AudioButton from './AudioButton.astro';
+import PolitenessBadge from './PolitenessBadge.astro';
+
+interface Props {
+  card: Card;
+}
+
+const { card } = Astro.props;
+
+const sceneAccent = `var(--scene-${card.scene})`;
+const unreviewed = card.verification_status === 'ai_generated_unreviewed';
+const hasDetail =
+  !!card.literal ||
+  !!card.register_note ||
+  card.likely_responses.length > 0 ||
+  card.slots.length > 0 ||
+  !!card.local_note;
+---
+
+<article
+  class="card card-surface relative p-4 md:p-5 flex flex-col break-inside-avoid"
+  style={`border-left: 4px solid ${sceneAccent};`}
+  data-card-id={card.id}
+  data-expanded="false"
+>
+  {/* 顶部：礼貌徽章 + 验证状态 + 右侧切换器 */}
+  <header class="flex items-start justify-between gap-2 mb-2">
+    <div class="flex items-center gap-2 flex-wrap">
+      <PolitenessBadge politeness={card.politeness} />
+      {unreviewed && (
+        <span
+          class="text-[0.6rem] text-amber-700/80 font-sans"
+          title="LLM 生成、未经俄语母语者审校；现场使用后欢迎反馈"
+        >
+          ⚠ AI 未审
+        </span>
+      )}
+    </div>
+
+    {hasDetail && (
+      <button
+        type="button"
+        data-card-toggle
+        aria-expanded="false"
+        aria-label="展开详情"
+        class="card-toggle w-7 h-7 -mr-1 -mt-1 rounded-full inline-flex items-center justify-center text-muted hover:bg-stone-100 hover:text-ink-soft transition-colors"
+      >
+        <span class="card-toggle-icon text-base leading-none transition-transform duration-300">⌄</span>
+      </button>
+    )}
+  </header>
+
+  {/* 主体三行 */}
+  <div class="flex flex-col gap-1">
+    <p class="cyr text-[length:var(--fs-cyr)] leading-snug font-bold text-ink">
+      {card.cyrillic}
+    </p>
+    <p class="trans">{card.transliteration}</p>
+    <p class="text-[length:var(--fs-zh)] text-ink-soft leading-snug">{card.chinese}</p>
+  </div>
+
+  {/* 音频按钮 */}
+  <div class="flex flex-wrap items-center gap-2 pt-3">
+    <AudioButton src={card.audio.phrase_normal} label="正常" variant="normal" />
+    <AudioButton src={card.audio.phrase_slow} label="慢" variant="slow" />
+  </div>
+
+  {/* 详情容器：grid-template-rows 动画 + inner overflow-hidden */}
+  {hasDetail && (
+    <div class="card-detail-grid">
+      <div class="card-detail-inner">
+        <div class="card-detail pt-4 mt-4 border-t border-dashed border-card-border space-y-4">
+
+          {card.literal && (
+            <p class="literal text-center !text-[0.82rem]">
+              {card.literal}
+            </p>
+          )}
+
+          {card.register_note && (
+            <p class="text-xs text-ink-soft leading-relaxed">
+              <span class="text-[0.6rem] font-sans uppercase tracking-widest text-muted mr-2">
+                语体
+              </span>
+              {card.register_note}
+            </p>
+          )}
+
+          {card.likely_responses.length > 0 && (
+            <div
+              class="pl-3"
+              style={`border-left: 2px solid ${sceneAccent};`}
+            >
+              <p class="text-[0.6rem] font-sans uppercase tracking-widest text-muted mb-2">
+                对方可能这样回
+              </p>
+              <ul class="space-y-2">
+                {card.likely_responses.map((r) => (
+                  <li>
+                    <p class="cyr text-[0.95rem] font-semibold text-ink leading-snug">
+                      {r.cyrillic}
+                    </p>
+                    <p class="trans !text-[0.78rem] mt-0.5">{r.trans}</p>
+                    <p class="text-[0.78rem] text-muted mt-0.5">{r.cn}</p>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          )}
+
+          {card.slots.length > 0 && (
+            <div>
+              <p class="text-[0.6rem] font-sans uppercase tracking-widest text-muted mb-2">
+                可替换
+              </p>
+              <ul class="space-y-2">
+                {card.slots.map((s) => (
+                  <li class="text-sm">
+                    <p class="text-[0.7rem] text-muted">{s.label}</p>
+                    <p class="cyr font-semibold text-ink mt-0.5">{s.swap}</p>
+                    <p class="trans !text-[0.75rem] mt-0.5">{s.trans}</p>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          )}
+
+          {card.local_note && (
+            <p class="text-xs text-ink-soft leading-relaxed italic">
+              <span class="not-italic mr-1">🇺🇿</span>
+              {card.local_note}
+            </p>
+          )}
+
+        </div>
+      </div>
+    </div>
+  )}
+</article>
+
+<style is:global>
+  /* ============================================================ */
+  /* Card 展开动画与样式                                            */
+  /* ============================================================ */
+
+  .card-detail-grid {
+    display: grid;
+    grid-template-rows: 0fr;
+    transition: grid-template-rows 280ms cubic-bezier(0.22, 0, 0.12, 1);
+  }
+  .card-detail-inner {
+    overflow: hidden;
+    min-height: 0;
+  }
+  .card-detail {
+    opacity: 0;
+    transform: translateY(-2px);
+    transition:
+      opacity 220ms ease 60ms,
+      transform 280ms cubic-bezier(0.22, 0, 0.12, 1) 60ms;
+  }
+  .card[data-expanded='true'] .card-detail-grid {
+    grid-template-rows: 1fr;
+  }
+  .card[data-expanded='true'] .card-detail {
+    opacity: 1;
+    transform: translateY(0);
+  }
+  .card[data-expanded='true'] .card-toggle-icon {
+    transform: rotate(180deg);
+  }
+
+  /* prefers-reduced-motion */
+  @media (prefers-reduced-motion: reduce) {
+    .card-detail-grid,
+    .card-detail,
+    .card-toggle-icon {
+      transition: none !important;
+    }
+  }
+</style>
+
+<script>
+  // 功能：点击 [data-card-toggle] 切换最近的 article 的 data-expanded
+  // 用全局事件委托，所有卡共享一个 listener
+  document.addEventListener('click', (e) => {
+    const target = e.target as HTMLElement;
+    const btn = target.closest<HTMLButtonElement>('[data-card-toggle]');
+    if (!btn) return;
+    const article = btn.closest<HTMLElement>('article.card');
+    if (!article) return;
+    const expanded = article.dataset.expanded === 'true';
+    const next = !expanded;
+    article.dataset.expanded = String(next);
+    btn.setAttribute('aria-expanded', String(next));
+  });
+</script>

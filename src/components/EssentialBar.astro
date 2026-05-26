@@ -1,0 +1,31 @@
+---
+// 功能：顶部"必备卡"便捷柜。横向滚动，跨场景挑出 is_essential: true 的卡
+// 输入：cards (已筛选 + 排序好)
+// 输出：粘性横排区块
+// 依赖：types, Card
+// 在项目中的作用：让用户打开网站就能在第一屏看到最高频的 10 张卡
+
+import type { Card as CardType } from '../lib/types';
+import Card from './Card.astro';
+
+interface Props {
+  cards: CardType[];
+}
+
+const { cards } = Astro.props;
+---
+
+<section id="essential-bar" class="mb-10 scroll-mt-20">
+  <header class="mb-3 flex items-baseline gap-3 flex-wrap">
+    <h2 class="text-2xl md:text-3xl font-bold tracking-tight text-ink">
+      ⭐ 必备卡
+    </h2>
+    <span class="text-xs font-sans text-muted">
+      跨场景挑出的 {cards.length} 张超高频。无论你在哪个场景，这些都要会。
+    </span>
+  </header>
+
+  <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+    {cards.map((c) => <Card card={c} />)}
+  </div>
+</section>

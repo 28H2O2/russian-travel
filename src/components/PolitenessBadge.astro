@@ -1,0 +1,28 @@
+---
+// 功能：在卡片上显示礼貌等级 (Вы / ты / neutral) 的小徽章
+// 输入：politeness prop
+// 输出：一个小圆角 chip
+// 依赖：tailwind utility classes
+// 在项目中的作用：让用户一眼看到这张卡是正式 / 亲昵 / 中性
+
+import type { Politeness } from '../lib/types';
+
+interface Props {
+  politeness: Politeness;
+}
+
+const { politeness } = Astro.props;
+
+const label =
+  politeness === 'Вы' ? '客气 Вы' :
+  politeness === 'ты' ? '亲昵 ты' : '中性';
+
+const cls =
+  politeness === 'Вы' ? 'bg-amber-100 text-amber-800 border-amber-200' :
+  politeness === 'ты' ? 'bg-rose-100 text-rose-800 border-rose-200' :
+  'bg-stone-100 text-stone-700 border-stone-200';
+---
+
+<span class={`inline-flex items-center gap-1 px-2 py-0.5 text-[0.65rem] border rounded-full font-sans ${cls}`}>
+  {label}
+</span>
