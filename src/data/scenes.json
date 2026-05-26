@@ -1,0 +1,98 @@
+[
+  {
+    "id": "essentials",
+    "name_zh": "必备应答 & 礼貌",
+    "name_en": "Essentials & Courtesy",
+    "name_ru": "Основные фразы",
+    "color_token": "essentials",
+    "order": 1,
+    "v1_target": 25,
+    "v2_target": 25,
+    "icon": "🟡",
+    "blurb": "零基础到能寒暄的桥。打招呼、道谢、表达听不懂、请对方重说。"
+  },
+  {
+    "id": "money",
+    "name_zh": "数字 & 钱",
+    "name_en": "Numbers & Money",
+    "name_ru": "Деньги и числа",
+    "color_token": "money",
+    "order": 2,
+    "v1_target": 25,
+    "v2_target": 30,
+    "icon": "🟢",
+    "blurb": "出租车、餐厅、市场、酒店都要用的数字与议价。本地货币是苏姆 (сум)。"
+  },
+  {
+    "id": "transport",
+    "name_zh": "交通",
+    "name_en": "Transport",
+    "name_ru": "Транспорт",
+    "color_token": "transport",
+    "order": 3,
+    "v1_target": 25,
+    "v2_target": 35,
+    "icon": "🔵",
+    "blurb": "从机场到酒店、从城市到城市的第一道关。塔什干 Yandex Go 普遍可用。"
+  },
+  {
+    "id": "food",
+    "name_zh": "餐饮",
+    "name_en": "Food & Restaurant",
+    "name_ru": "Еда и рестораны",
+    "color_token": "food",
+    "order": 4,
+    "v1_target": 25,
+    "v2_target": 40,
+    "icon": "🔴",
+    "blurb": "Plov、烤包子 (samsa)、烤串 (shashlyk)、tandyr 面包——能点能拒能问辣不辣。"
+  },
+  {
+    "id": "lodging",
+    "name_zh": "住宿",
+    "name_en": "Lodging",
+    "name_ru": "Жильё",
+    "color_token": "lodging",
+    "order": 5,
+    "v1_target": 0,
+    "v2_target": 25,
+    "icon": "🟣",
+    "blurb": "入住、退房、Wi-Fi 密码、热水、空调。v2 即将上线。"
+  },
+  {
+    "id": "shopping",
+    "name_zh": "购物砍价",
+    "name_en": "Shopping & Bargain",
+    "name_ru": "Покупки",
+    "color_token": "shopping",
+    "order": 6,
+    "v1_target": 0,
+    "v2_target": 30,
+    "icon": "🟠",
+    "blurb": "Chorsu Bazaar、地毯、丝绸、陶器——砍价从对半开始。v2 即将上线。"
+  },
+  {
+    "id": "emergency",
+    "name_zh": "应急",
+    "name_en": "Emergency",
+    "name_ru": "Экстренные ситуации",
+    "color_token": "emergency",
+    "order": 7,
+    "v1_target": 0,
+    "v2_target": 20,
+    "icon": "⚫",
+    "blurb": "医院、警察、丢东西、过敏、护照丢失。v2 即将上线。"
+  },
+  {
+    "id": "chat",
+    "name_zh": "闲聊 & 文化",
+    "name_en": "Small Talk & Culture",
+    "name_ru": "Беседа",
+    "color_token": "chat",
+    "order": 8,
+    "v1_target": 0,
+    "v2_target": 25,
+    "icon": "⚪",
+    "blurb": "你从哪来、好吃、好看、清真寺礼仪。v2 即将上线。"
+  }
+]
