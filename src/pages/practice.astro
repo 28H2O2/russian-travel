@@ -296,6 +296,11 @@ const cardsJson = JSON.stringify(cards);
     .practice-btn-grade:hover {
       filter: brightness(0.97);
     }
+    /* 评分写入中（grade race lock 期间）：禁用点击 + 视觉淡化 */
+    .practice-grade-bar.is-busy {
+      pointer-events: none;
+      opacity: 0.55;
+    }
 
     /* 翻面动画 */
     @keyframes practice-flip-in {
@@ -336,6 +341,7 @@ const cardsJson = JSON.stringify(cards);
       buildQueue,
       bucketize,
       dueLabel,
+      isNew,
       type CardProgress,
       type Grade,
     } from '../lib/srs';
@@ -346,9 +352,14 @@ const cardsJson = JSON.stringify(cards);
       putProgress,
       setMeta,
       ensureInstalled,
+      getDailyNewUsed,
+      incrementDailyNewCount,
       META_KEYS,
     } from '../lib/db';
     import type { Card } from '../lib/types';
+
+    /** 每日新卡引入上限。可在 /data 页未来加滑块；现在硬编 20 */
+    const DAILY_NEW_CAP = 20;
 
     // ---------- 读取页面数据 ----------
     const cardsDataEl = document.getElementById('practice-cards-data');
@@ -376,6 +387,8 @@ const cardsJson = JSON.stringify(cards);
     let queue: string[] = [];
     let cursor = 0;
     let sessionStats = { again: 0, good: 0, easy: 0 };
+    /** 评分写入中——防止连点把同一张卡评两次 + 把下一张跳过 */
+    let isGrading = false;
 
     // ---------- 评分按钮预览（"如果选这个、下次什么时候再来"） ----------
     function updateGradePreviews(currentProgress: CardProgress) {
@@ -495,21 +508,35 @@ const cardsJson = JSON.stringify(cards);
     }
 
     async function grade(g: Grade) {
-      const card = CARDS_BY_ID.get(queue[cursor]);
-      if (!card) return;
+      // 锁：同一时刻只允许一次评分进 IDB 流水；连点 / 键盘狂按都被忽略
+      if (isGrading) return;
+      isGrading = true;
+      const gradeBar = document.querySelector<HTMLElement>('.practice-grade-bar');
+      gradeBar?.classList.add('is-busy');
+      try {
+        const card = CARDS_BY_ID.get(queue[cursor]);
+        if (!card) return;
 
-      const existing = await getProgress(card.id);
-      const before = existing ?? newCardProgress(card.id);
-      const after = review(before, g, Date.now());
-      await putProgress(after);
-      sessionStats[g] += 1;
+        const existing = await getProgress(card.id);
+        const before = existing ?? newCardProgress(card.id);
+        const wasNew = isNew(before);
+        const after = review(before, g, Date.now());
+        await putProgress(after);
+        sessionStats[g] += 1;
 
-      cursor += 1;
-      if (cursor >= queue.length) {
-        await finishSession();
-      } else {
-        updateProgressBar();
-        renderCard(CARDS_BY_ID.get(queue[cursor])!);
+        // 命中新卡时累加当日新卡计数，跨 session 的每日上限就此接通
+        if (wasNew) await incrementDailyNewCount();
+
+        cursor += 1;
+        if (cursor >= queue.length) {
+          await finishSession();
+        } else {
+          updateProgressBar();
+          renderCard(CARDS_BY_ID.get(queue[cursor])!);
+        }
+      } finally {
+        isGrading = false;
+        gradeBar?.classList.remove('is-busy');
       }
     }
 
@@ -562,9 +589,12 @@ const cardsJson = JSON.stringify(cards);
         if (!c) return 9999;
         return (c.is_essential ? 0 : 1000) + c.tier * 100;
       };
+      // 今日已引入的新卡数——跨 session 持久化，"再练 10 张新的"按钮临时加 extraNew
+      const usedToday = await getDailyNewUsed();
+      const remainingNew = Math.max(0, DAILY_NEW_CAP - usedToday) + extraNew;
       queue = buildQueue(allIds, allProgress, {
         now: Date.now(),
-        dailyNewLimit: 20 + extraNew,
+        dailyNewLimit: remainingNew,
         newOrderPriority,
       });
       cursor = 0;

@@ -141,6 +141,20 @@ export async function clearAllProgress(): Promise<void> {
   return commit(tx);
 }
 
+/**
+ * 原子地把整库替换为新数据：单个 readwrite 事务里先 clear 再批量 put。
+ * 失败时 IDB 自动 abort、原数据保留——避免 "clear 成功、put 失败" 导致数据丢失。
+ * 用于 importProgress(mode='replace') 路径。
+ */
+export async function replaceAllProgress(items: CardProgress[]): Promise<void> {
+  const db = await openDb();
+  const tx = db.transaction(STORE_PROGRESS, 'readwrite');
+  const store = tx.objectStore(STORE_PROGRESS);
+  store.clear();
+  for (const item of items) store.put(item);
+  return commit(tx);
+}
+
 /* ============================================================ */
 /* meta store                                                    */
 /* ============================================================ */
@@ -184,7 +198,48 @@ export async function clearAllMeta(): Promise<void> {
 export async function ensureInstalled(now: number = Date.now()): Promise<void> {
   if (!isBrowser()) return;
   const existing = await getMeta<number>(META_KEYS.installedAt);
-  if (!existing) await setMeta(META_KEYS.installedAt, now);
+  // 用 === undefined 而非 !existing：0 也算已设置（防御未来 schema 变化）
+  if (existing === undefined) await setMeta(META_KEYS.installedAt, now);
+}
+
+/* ============================================================ */
+/* 每日新卡上限——跨 session 持久化                              */
+/* ============================================================ */
+
+export interface DailyNewCount {
+  /** 'YYYY-MM-DD'，本地时区 */
+  date: string;
+  /** 当日已"首次评分"的新卡数 */
+  count: number;
+}
+
+/** 本地时区今天的 YYYY-MM-DD 串。NOT UTC——以用户所在地的"今天"为准 */
+export function todayKey(now: number = Date.now()): string {
+  const d = new Date(now);
+  return (
+    d.getFullYear() +
+    '-' +
+    String(d.getMonth() + 1).padStart(2, '0') +
+    '-' +
+    String(d.getDate()).padStart(2, '0')
+  );
+}
+
+/** 读今日已用的新卡数；跨日自动清零 */
+export async function getDailyNewUsed(now: number = Date.now()): Promise<number> {
+  const stored = await getMeta<DailyNewCount>(META_KEYS.dailyNewCount);
+  if (!stored || typeof stored !== 'object' || stored.date !== todayKey(now)) {
+    return 0;
+  }
+  return typeof stored.count === 'number' ? stored.count : 0;
+}
+
+/** 评分命中新卡（wasNew=true）时调用：今日计数 +1 并持久化 */
+export async function incrementDailyNewCount(now: number = Date.now()): Promise<void> {
+  const today = todayKey(now);
+  const stored = await getMeta<DailyNewCount>(META_KEYS.dailyNewCount);
+  const used = stored && stored.date === today && typeof stored.count === 'number' ? stored.count : 0;
+  await setMeta(META_KEYS.dailyNewCount, { date: today, count: used + 1 } satisfies DailyNewCount);
 }
 
 /**

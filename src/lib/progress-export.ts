@@ -4,7 +4,14 @@
 // 依赖：./db, ./srs
 // 在项目中的作用：用户的逃生口——换机、清缓存、备份、跨设备同步全靠它
 
-import { getAllProgress, bulkPutProgress, clearAllProgress, getMeta, setMeta, META_KEYS } from './db';
+import {
+  getAllProgress,
+  bulkPutProgress,
+  replaceAllProgress,
+  getMeta,
+  setMeta,
+  META_KEYS,
+} from './db';
 import type { CardProgress } from './srs';
 
 /** 当前导出格式版本。改 schema 时升号、并在 importProgress 里做迁移 */
@@ -128,9 +135,10 @@ function isValidProgress(p: unknown): p is CardProgress {
 
 /**
  * 导入一个 JSON 字符串。
- * mode='replace'：先清空当前进度，再写入。
- * mode='merge'：保留本机进度；只有当本机没有同 card_id 时才写入。
- *               （也可改成"取较新 last_reviewed"的策略，但目前 merge 简单为主）
+ * mode='replace'：原子地清空 + 写入（单个 IDB 事务，失败回滚）
+ * mode='merge'：按 last_reviewed 取较新；incoming 较旧或并列则跳过
+ *
+ * 返回 imported = 实际写入条数；skipped = 校验失败 + 合并失败 之和。
  */
 export async function importProgress(jsonText: string, mode: ImportMode): Promise<ImportResult> {
   let parsed: unknown;
@@ -142,18 +150,23 @@ export async function importProgress(jsonText: string, mode: ImportMode): Promis
   validateBundle(parsed);
   const bundle = parsed;
 
+  // 第一道筛：schema 校验
   const valid: CardProgress[] = [];
-  let skipped = 0;
+  let validationSkipped = 0;
   for (const p of bundle.progress) {
     if (isValidProgress(p)) valid.push(p);
-    else skipped += 1;
+    else validationSkipped += 1;
   }
 
+  let toWriteCount: number;
+  let mergeSkipped = 0;
+
   if (mode === 'replace') {
-    await clearAllProgress();
-    await bulkPutProgress(valid);
+    // 单 tx 原子替换；失败 IDB 自动 abort、原数据保留
+    await replaceAllProgress(valid);
+    toWriteCount = valid.length;
   } else {
-    // merge：以"哪条 last_reviewed 更新"为胜负判据
+    // merge：incoming 比本地新才写
     const existing = await getAllProgress();
     const byId = new Map(existing.map((e) => [e.card_id, e]));
     const toWrite: CardProgress[] = [];
@@ -165,23 +178,32 @@ export async function importProgress(jsonText: string, mode: ImportMode): Promis
         const localTs = local.last_reviewed ?? 0;
         const incomingTs = incoming.last_reviewed ?? 0;
         if (incomingTs > localTs) toWrite.push(incoming);
-        else skipped += 1;
+        else mergeSkipped += 1;
       }
     }
     await bulkPutProgress(toWrite);
+    toWriteCount = toWrite.length;
   }
 
-  // 恢复 meta（不影响 schema_version）
+  // 恢复 meta：installed_at 始终保留本机；其它字段按时间戳取较新
+  // （旧 bundle merge 进新机时，避免把 last_session_at 倒退）
   if (bundle.meta && typeof bundle.meta === 'object') {
     for (const [k, v] of Object.entries(bundle.meta)) {
-      if (k === META_KEYS.installedAt) continue; // 保留本机 installed_at
+      if (k === META_KEYS.installedAt) continue;
+      if (mode === 'merge') {
+        // 数字类时间戳取较新
+        const localV = await getMeta(k);
+        if (typeof v === 'number' && typeof localV === 'number' && localV >= v) {
+          continue; // 本地更新，跳过
+        }
+      }
       await setMeta(k, v);
     }
   }
 
   return {
-    imported: mode === 'replace' ? valid.length : valid.length - skipped,
-    skipped,
+    imported: toWriteCount,
+    skipped: validationSkipped + mergeSkipped,
     mode,
     source_exported_at: bundle.exported_at,
   };

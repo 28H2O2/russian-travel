@@ -190,16 +190,27 @@ export function dueLabel(state: CardProgress, now: number = Date.now()): string 
 /* ============================================================ */
 
 export interface QueueStats {
-  due: number; // 到期复习（学习中、due <= now）
-  new: number; // 新卡（从未学过）
-  later: number; // 学习中但未到期
-  mature: number; // 已掌握（含未到期与到期）
-  total: number; // 全部卡数
+  /** 到期复习（含已 mature 但到期的卡——它们仍需要练） */
+  due: number;
+  /** 新卡（从未学过） */
+  new: number;
+  /** 学习中：练过但尚未 mature 且未到期 */
+  later: number;
+  /** 已掌握：mature 且未到期（不需要现在练） */
+  mature: number;
+  /** 全部卡数；保证 new + due + later + mature === total（四桶互斥） */
+  total: number;
 }
 
 /**
  * 把进度记录数组分桶。card_ids 是 cards.json 里所有卡的 id 列表。
- * 没有 progress 记录的卡视为"新卡"。
+ * 四桶互斥：每张卡恰好落在 new / due / later / mature 之一，总和 = total。
+ *
+ * 分类逻辑：
+ *   - 没记录 / total_reviews=0 → new
+ *   - 否则若到期（due <= now）→ due（哪怕已 mature，也要先练）
+ *   - 否则若已 mature → mature（长期记住、不必现在练）
+ *   - 否则 → later（学习中，等到期）
  */
 export function bucketize(
   card_ids: string[],
@@ -215,11 +226,13 @@ export function bucketize(
     const p = byId.get(id);
     if (!p || isNew(p)) {
       neu += 1;
-      continue;
+    } else if (isDue(p, now)) {
+      due += 1;
+    } else if (isMature(p)) {
+      mature += 1;
+    } else {
+      later += 1;
     }
-    if (isMature(p)) mature += 1;
-    if (isDue(p, now)) due += 1;
-    else later += 1;
   }
   return { due, new: neu, later, mature, total: card_ids.length };
 }
