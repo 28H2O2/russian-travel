@@ -1,0 +1,21 @@
+{
+  "name": "russian-travel",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "俄语生存短语卡片站点。为 2026 年 8 月去乌兹别克斯坦的旅行者设计。",
+  "scripts": {
+    "dev": "astro dev --host",
+    "build": "astro build",
+    "preview": "astro preview --host",
+    "astro": "astro",
+    "check": "astro check"
+  },
+  "dependencies": {
+    "@astrojs/check": "^0.9.4",
+    "@astrojs/tailwind": "^5.1.4",
+    "astro": "^4.16.18",
+    "tailwindcss": "^3.4.17",
+    "typescript": "^5.7.3"
+  }
+}
