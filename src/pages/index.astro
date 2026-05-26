@@ -17,6 +17,24 @@ const v2Total = scenes.reduce((sum, s) => sum + s.v2_target, 0);
 ---
 
 <Layout>
+  {/* 右上角工具条：练习 + 数据 */}
+  <div class="fixed top-3 right-3 z-30 flex gap-2 safe-pt">
+    <a
+      href="/practice"
+      class="home-tool-link"
+      aria-label="进入练习"
+    >
+      练习
+    </a>
+    <a
+      href="/data"
+      class="home-tool-link"
+      aria-label="数据与备份"
+    >
+      数据
+    </a>
+  </div>
+
   {/* 顶部品牌 */}
   <header class="max-w-5xl mx-auto px-4 pt-10 pb-6 md:pt-16 md:pb-10 text-center">
     <p class="text-xs font-sans uppercase tracking-[0.3em] text-muted mb-2">
@@ -83,7 +101,7 @@ const v2Total = scenes.reduce((sum, s) => sum + s.v2_target, 0);
   </main>
 
   {/* 底部说明 */}
-  <footer class="max-w-5xl mx-auto px-4 py-12 text-xs font-sans text-muted text-center space-y-2">
+  <footer class="max-w-5xl mx-auto px-4 py-12 pb-28 text-xs font-sans text-muted text-center space-y-2">
     <p>
       ⚠ 当前阶段卡片由 LLM 生成、未经俄语母语者审校。现场使用后欢迎在 GitHub 反馈。
     </p>
@@ -97,4 +115,78 @@ const v2Total = scenes.reduce((sum, s) => sum + s.v2_target, 0);
       >ogden.munch.love</a>
     </p>
   </footer>
+
+  {/* 浮动入口：今日 N 张待练（小屏沉底、大屏右下） */}
+  <a
+    href="/practice"
+    id="home-practice-fab"
+    class="fixed bottom-4 right-4 z-30 inline-flex items-center gap-2 px-4 py-2.5 rounded-full
+           text-sm font-sans font-semibold shadow-lg transition-all opacity-0 translate-y-2 pointer-events-none"
+    style="background: var(--ink); color: var(--paper);"
+    aria-label="进入练习"
+    hidden
+  >
+    <span>▶</span>
+    <span data-fab-label>开始练习</span>
+  </a>
+
+  <script is:inline type="application/json" id="home-card-ids" set:html={JSON.stringify(getCards().map((c) => c.id))}></script>
+  <script>
+    import { getAllProgress, ensureInstalled } from '../lib/db';
+    import { bucketize } from '../lib/srs';
+
+    const fab = document.getElementById('home-practice-fab');
+    const idsEl = document.getElementById('home-card-ids');
+    if (fab && idsEl) {
+      const ids: string[] = JSON.parse(idsEl.textContent || '[]');
+      (async () => {
+        try {
+          await ensureInstalled();
+          const all = await getAllProgress();
+          const stats = bucketize(ids, all, Date.now());
+          const label = fab.querySelector<HTMLElement>('[data-fab-label]');
+          if (label) {
+            if (stats.due > 0) {
+              label.textContent = `今日 ${stats.due} 张待复习`;
+            } else if (all.length === 0) {
+              label.textContent = '开始练习';
+            } else {
+              label.textContent = '继续练习';
+            }
+          }
+          fab.hidden = false;
+          // 入场动画
+          requestAnimationFrame(() => {
+            fab.classList.remove('opacity-0', 'translate-y-2', 'pointer-events-none');
+            fab.classList.add('opacity-100', 'translate-y-0');
+          });
+        } catch (e) {
+          // 无 IndexedDB / 出错 → 仍然显示一个普通入口
+          fab.hidden = false;
+          fab.classList.remove('opacity-0', 'translate-y-2', 'pointer-events-none');
+        }
+      })();
+    }
+  </script>
 </Layout>
+
+<style is:global>
+  /* 主页右上角小工具链接 */
+  .home-tool-link {
+    display: inline-flex;
+    align-items: center;
+    padding: 0.35rem 0.85rem;
+    border-radius: 999px;
+    background: rgba(255, 250, 240, 0.85);
+    backdrop-filter: blur(6px);
+    border: 1px solid var(--card-border);
+    color: var(--ink-soft);
+    font-family: ui-sans-serif, system-ui, sans-serif;
+    font-size: 0.78rem;
+    transition: background 140ms ease, color 140ms ease;
+  }
+  .home-tool-link:hover {
+    background: var(--paper-soft);
+    color: var(--ink);
+  }
+</style>
