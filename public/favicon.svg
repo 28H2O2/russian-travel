@@ -1,0 +1,19 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
+  <!-- 圆角方形米黄底，匹配项目 design tokens -->
+  <rect width="512" height="512" rx="96" fill="#faf5ec"/>
+  <!-- "P" / "Р" 形（用 path 不依赖字体）：竖线 + 上半部 D 形圈 -->
+  <path d="M150 110
+           L150 402
+           M150 110
+           L290 110
+           Q380 110 380 195
+           Q380 280 290 280
+           L150 280"
+        stroke="#2a221c"
+        stroke-width="56"
+        stroke-linecap="round"
+        stroke-linejoin="round"
+        fill="none"/>
+  <!-- 右上角橙色 accent dot（呼应 ogden.munch.love 风格） -->
+  <circle cx="402" cy="138" r="34" fill="#c4661f"/>
+</svg>
