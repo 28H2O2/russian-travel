@@ -1,0 +1,679 @@
+---
+// 功能：SRS 练习页。今日队列 → 翻面 → 3 按钮评分（忘了/一般/会）→ 下一张
+// 输入：src/data/cards.json（通过 lib/data）
+// 输出：单页客户端应用（队列、渲染、评分由 lib/srs + lib/db 驱动）
+// 如何运行：astro dev → http://localhost:4321/practice
+// 依赖：Layout, lib/data, 客户端：lib/srs, lib/db
+// 在项目中的作用：本项目的"动词"——浏览是 noun，练习才能内化
+
+import Layout from '../layouts/Layout.astro';
+import { getCards } from '../lib/data';
+
+const cards = getCards();
+// 把卡片完整序列化进页面（25 张时约 30KB，完全可接受；100 张时约 120KB，仍可控）
+const cardsJson = JSON.stringify(cards);
+---
+
+<Layout title="练习 · 俄语生存包" description="间隔重复练习，离线可用">
+  <main class="practice-page max-w-2xl mx-auto px-4 pt-4 pb-12 min-h-screen flex flex-col">
+    {/* 顶部 */}
+    <header class="flex items-center justify-between gap-3 mb-4">
+      <a
+        href="/"
+        class="text-sm font-sans text-muted hover:text-ink-soft transition-colors inline-flex items-center gap-1"
+      >
+        ← 返回
+      </a>
+      <div id="practice-stats" class="text-xs font-sans text-muted">
+        <span data-stat="position">—</span>
+      </div>
+      <a
+        href="/data"
+        class="text-sm font-sans text-muted hover:text-ink-soft transition-colors"
+      >
+        数据
+      </a>
+    </header>
+
+    {/* 进度条 */}
+    <div class="practice-progress" aria-hidden="true">
+      <div id="practice-progress-bar" class="practice-progress-bar"></div>
+    </div>
+
+    {/* 状态视图：5 选 1 */}
+    <section id="practice-view-loading" class="practice-view py-20 text-center">
+      <p class="text-muted">加载进度中…</p>
+    </section>
+
+    <section id="practice-view-empty" class="practice-view py-12 text-center" hidden>
+      <p class="text-4xl mb-4">✓</p>
+      <h2 class="font-serif text-2xl text-ink mb-2" data-empty-title>今天没什么要练的</h2>
+      <p class="text-sm text-muted mb-6" data-empty-detail>所有卡片都未到期。</p>
+      <div class="flex gap-2 justify-center flex-wrap">
+        <button type="button" data-action="practice-more" class="practice-btn-secondary">
+          再练 10 张新的
+        </button>
+        <a href="/" class="practice-btn-link">返回首页</a>
+      </div>
+    </section>
+
+    <section id="practice-view-card" class="practice-view flex-1 flex flex-col" hidden>
+      {/* 卡面 — 正面（仅 cyrillic + 音频）→ 翻面后显示全部 */}
+      <article
+        id="practice-card"
+        class="practice-card card-surface relative p-5 md:p-7 flex-1 flex flex-col"
+        data-side="front"
+      >
+        <header class="flex items-start justify-between mb-3 text-xs">
+          <span data-card-scene class="practice-scene-chip"></span>
+          <span data-card-politeness class="practice-pol"></span>
+        </header>
+
+        {/* 正面：cyrillic + 音频，引导先听 + 默念 */}
+        <div class="practice-front flex-1 flex flex-col items-center justify-center text-center gap-5">
+          <p data-card-cyrillic class="cyr text-3xl md:text-4xl font-bold text-ink leading-snug"></p>
+          <div class="flex gap-2">
+            <button type="button" data-practice-audio="slow" class="practice-audio-btn">
+              🔉 慢
+            </button>
+            <button type="button" data-practice-audio="normal" class="practice-audio-btn">
+              🔊 正常
+            </button>
+          </div>
+        </div>
+
+        {/* 背面：全字段 */}
+        <div class="practice-back flex flex-col gap-3" hidden>
+          <p data-card-cyrillic-back class="cyr text-2xl md:text-3xl font-bold text-ink leading-snug text-center"></p>
+          <p data-card-trans class="trans text-center"></p>
+          <p data-card-chinese class="text-lg md:text-xl text-ink-soft text-center"></p>
+          <p data-card-literal class="literal text-center !text-xs"></p>
+
+          <div class="flex gap-2 justify-center pt-1">
+            <button type="button" data-practice-audio="slow" class="practice-audio-btn !py-1 !px-3 !text-xs">
+              🔉 慢
+            </button>
+            <button type="button" data-practice-audio="normal" class="practice-audio-btn !py-1 !px-3 !text-xs">
+              🔊 正常
+            </button>
+          </div>
+
+          <div data-card-responses class="pl-3 mt-2" hidden>
+            <p class="text-[0.6rem] font-sans uppercase tracking-widest text-muted mb-2">对方可能这样回</p>
+            <ul data-card-responses-list class="space-y-2"></ul>
+          </div>
+
+          <p data-card-local-note class="text-xs text-ink-soft leading-relaxed italic" hidden></p>
+        </div>
+      </article>
+
+      {/* 翻面按钮（front 显示）/ 评分按钮（back 显示） */}
+      <div class="practice-actions pt-4">
+        <button
+          type="button"
+          data-action="flip"
+          class="practice-btn-primary w-full"
+          aria-keyshortcuts="Space"
+        >
+          翻面 <span class="opacity-50 text-xs ml-1 hidden md:inline">[空格]</span>
+        </button>
+
+        <div class="practice-grade-bar grid grid-cols-3 gap-2" hidden>
+          <button type="button" data-grade="again" class="practice-btn-grade practice-btn-again">
+            <span class="text-base">忘了</span>
+            <span class="text-[0.65rem] opacity-70" data-grade-preview="again">~1 小时</span>
+          </button>
+          <button type="button" data-grade="good" class="practice-btn-grade practice-btn-good">
+            <span class="text-base">一般</span>
+            <span class="text-[0.65rem] opacity-70" data-grade-preview="good">—</span>
+          </button>
+          <button type="button" data-grade="easy" class="practice-btn-grade practice-btn-easy">
+            <span class="text-base">很会</span>
+            <span class="text-[0.65rem] opacity-70" data-grade-preview="easy">—</span>
+          </button>
+        </div>
+      </div>
+    </section>
+
+    <section id="practice-view-done" class="practice-view py-12 text-center" hidden>
+      <p class="text-4xl mb-4">🎉</p>
+      <h2 class="font-serif text-2xl text-ink mb-2">这一轮结束</h2>
+      <p class="text-sm text-muted mb-6" data-done-detail></p>
+      <div class="flex gap-2 justify-center flex-wrap">
+        <button type="button" data-action="practice-again" class="practice-btn-primary">
+          再来一轮
+        </button>
+        <a href="/" class="practice-btn-link">返回首页</a>
+      </div>
+    </section>
+
+    {/* 错误态 */}
+    <section id="practice-view-error" class="practice-view py-12 text-center" hidden>
+      <p class="text-3xl mb-4">⚠️</p>
+      <p class="text-sm text-muted" data-error-detail></p>
+    </section>
+  </main>
+
+  {/* 把全部卡片数据嵌进去，client 端 JSON.parse 出来 */}
+  <script is:inline type="application/json" id="practice-cards-data" set:html={cardsJson}></script>
+
+  <style is:global>
+    /* ============================================================ */
+    /* 练习页样式                                                    */
+    /* ============================================================ */
+
+    .practice-page {
+      /* 让卡片在小屏占满高度感觉更"沉浸" */
+    }
+
+    .practice-progress {
+      height: 3px;
+      background: var(--card-border);
+      border-radius: 999px;
+      overflow: hidden;
+      margin-bottom: 1rem;
+    }
+    .practice-progress-bar {
+      height: 100%;
+      width: 0%;
+      background: var(--accent);
+      transition: width 240ms ease;
+    }
+
+    .practice-card {
+      min-height: 22rem;
+    }
+
+    .practice-scene-chip {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.25rem;
+      padding: 0.15rem 0.6rem;
+      border-radius: 999px;
+      background: var(--scene-chip-bg, var(--card-border));
+      color: var(--ink-soft);
+      font-family: ui-sans-serif, system-ui, sans-serif;
+      font-size: 0.65rem;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+    }
+    .practice-pol {
+      font-family: ui-sans-serif, system-ui, sans-serif;
+      font-size: 0.65rem;
+      color: var(--muted);
+      letter-spacing: 0.05em;
+    }
+
+    .practice-audio-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.35rem;
+      padding: 0.5rem 0.9rem;
+      border-radius: 999px;
+      background: var(--paper-soft);
+      color: var(--ink-soft);
+      font-family: ui-sans-serif, system-ui, sans-serif;
+      font-size: 0.85rem;
+      border: 1px solid var(--card-border);
+      transition: background 140ms ease, transform 80ms ease;
+    }
+    .practice-audio-btn:active {
+      transform: scale(0.96);
+    }
+    .practice-audio-btn.is-playing {
+      background: var(--accent-soft);
+      color: var(--ink);
+    }
+
+    .practice-btn-primary {
+      padding: 0.85rem 1.5rem;
+      border-radius: 12px;
+      background: var(--ink);
+      color: var(--paper);
+      font-family: ui-sans-serif, system-ui, sans-serif;
+      font-size: 0.95rem;
+      font-weight: 600;
+      transition: transform 80ms ease, background 140ms ease;
+    }
+    .practice-btn-primary:active {
+      transform: scale(0.98);
+    }
+    .practice-btn-primary:hover {
+      background: var(--ink-soft);
+    }
+
+    .practice-btn-secondary {
+      padding: 0.6rem 1.1rem;
+      border-radius: 10px;
+      background: var(--paper-soft);
+      color: var(--ink-soft);
+      font-family: ui-sans-serif, system-ui, sans-serif;
+      font-size: 0.85rem;
+      border: 1px solid var(--card-border);
+    }
+    .practice-btn-secondary:hover {
+      background: var(--card-border);
+    }
+
+    .practice-btn-link {
+      padding: 0.6rem 1.1rem;
+      font-family: ui-sans-serif, system-ui, sans-serif;
+      font-size: 0.85rem;
+      color: var(--muted);
+    }
+    .practice-btn-link:hover {
+      color: var(--ink-soft);
+    }
+
+    .practice-btn-grade {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 0.85rem 0.4rem;
+      border-radius: 12px;
+      font-family: ui-sans-serif, system-ui, sans-serif;
+      font-weight: 600;
+      transition: transform 80ms ease, filter 140ms ease;
+      border: 1px solid var(--card-border);
+      gap: 0.15rem;
+    }
+    .practice-btn-grade:active {
+      transform: scale(0.97);
+    }
+    .practice-btn-again {
+      background: #f4d8d4;
+      color: #7a2e26;
+    }
+    .practice-btn-good {
+      background: #faf0c8;
+      color: #5a4612;
+    }
+    .practice-btn-easy {
+      background: #dceedc;
+      color: #2a5f3a;
+    }
+    .practice-btn-grade:hover {
+      filter: brightness(0.97);
+    }
+
+    /* 翻面动画 */
+    @keyframes practice-flip-in {
+      from {
+        opacity: 0;
+        transform: translateY(8px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+    .practice-card[data-side='back'] .practice-back {
+      animation: practice-flip-in 220ms ease;
+    }
+    .practice-card[data-side='back'] .practice-front {
+      display: none;
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      .practice-card[data-side='back'] .practice-back {
+        animation: none;
+      }
+      .practice-progress-bar {
+        transition: none;
+      }
+    }
+  </style>
+
+  <script>
+    // ============================================================
+    // /practice 客户端逻辑
+    // 状态机：loading → (empty | card | done | error)
+    // ============================================================
+    import {
+      newCardProgress,
+      review,
+      buildQueue,
+      bucketize,
+      dueLabel,
+      type CardProgress,
+      type Grade,
+    } from '../lib/srs';
+    import {
+      openDb,
+      getAllProgress,
+      getProgress,
+      putProgress,
+      setMeta,
+      ensureInstalled,
+      META_KEYS,
+    } from '../lib/db';
+    import type { Card } from '../lib/types';
+
+    // ---------- 读取页面数据 ----------
+    const cardsDataEl = document.getElementById('practice-cards-data');
+    if (!cardsDataEl) throw new Error('practice-cards-data missing');
+    const ALL_CARDS: Card[] = JSON.parse(cardsDataEl.textContent || '[]');
+    const CARDS_BY_ID = new Map(ALL_CARDS.map((c) => [c.id, c]));
+
+    // ---------- 视图切换辅助 ----------
+    type ViewId = 'loading' | 'empty' | 'card' | 'done' | 'error';
+    function showView(view: ViewId) {
+      const ids: ViewId[] = ['loading', 'empty', 'card', 'done', 'error'];
+      for (const id of ids) {
+        const el = document.getElementById(`practice-view-${id}`);
+        if (el) (el as HTMLElement).hidden = id !== view;
+      }
+    }
+
+    function setError(msg: string) {
+      const el = document.querySelector<HTMLElement>('[data-error-detail]');
+      if (el) el.textContent = msg;
+      showView('error');
+    }
+
+    // ---------- 队列状态 ----------
+    let queue: string[] = [];
+    let cursor = 0;
+    let sessionStats = { again: 0, good: 0, easy: 0 };
+
+    // ---------- 评分按钮预览（"如果选这个、下次什么时候再来"） ----------
+    function updateGradePreviews(currentProgress: CardProgress) {
+      const previews: Grade[] = ['again', 'good', 'easy'];
+      const now = Date.now();
+      for (const g of previews) {
+        const next = review(currentProgress, g, now);
+        const el = document.querySelector<HTMLElement>(`[data-grade-preview="${g}"]`);
+        if (el) el.textContent = dueLabel(next, now);
+      }
+    }
+
+    // ---------- 卡面渲染 ----------
+    function renderCard(card: Card) {
+      const root = document.getElementById('practice-card')!;
+      root.dataset.side = 'front';
+
+      // 场景 chip 颜色
+      const sceneEl = document.querySelector<HTMLElement>('[data-card-scene]')!;
+      sceneEl.textContent = card.scene;
+      sceneEl.style.setProperty('--scene-chip-bg', `var(--scene-${card.scene}-soft)`);
+      root.style.borderLeft = `4px solid var(--scene-${card.scene})`;
+
+      // 礼貌
+      const polEl = document.querySelector<HTMLElement>('[data-card-politeness]')!;
+      polEl.textContent = card.politeness === 'neutral' ? '' : card.politeness;
+
+      // 正面
+      document.querySelector('[data-card-cyrillic]')!.textContent = card.cyrillic;
+
+      // 背面
+      document.querySelector('[data-card-cyrillic-back]')!.textContent = card.cyrillic;
+      document.querySelector('[data-card-trans]')!.textContent = card.transliteration;
+      document.querySelector('[data-card-chinese]')!.textContent = card.chinese;
+      document.querySelector('[data-card-literal]')!.textContent = card.literal;
+
+      // 对方可能这样回
+      const respWrap = document.querySelector<HTMLElement>('[data-card-responses]')!;
+      const respList = document.querySelector<HTMLElement>('[data-card-responses-list]')!;
+      if (card.likely_responses.length > 0) {
+        respWrap.hidden = false;
+        respWrap.style.borderLeft = `2px solid var(--scene-${card.scene})`;
+        respList.innerHTML = card.likely_responses
+          .map(
+            (r) => `
+            <li>
+              <p class="cyr text-[0.95rem] font-semibold text-ink leading-snug">${escapeHtml(r.cyrillic)}</p>
+              <p class="trans !text-[0.78rem] mt-0.5">${escapeHtml(r.trans)}</p>
+              <p class="text-[0.78rem] text-muted mt-0.5">${escapeHtml(r.cn)}</p>
+            </li>
+          `,
+          )
+          .join('');
+      } else {
+        respWrap.hidden = true;
+      }
+
+      // 本地注
+      const noteEl = document.querySelector<HTMLElement>('[data-card-local-note]')!;
+      if (card.local_note) {
+        noteEl.hidden = false;
+        noteEl.innerHTML = `<span class="not-italic mr-1">🇺🇿</span>${escapeHtml(card.local_note)}`;
+      } else {
+        noteEl.hidden = true;
+      }
+
+      // 设置音频按钮的 src（用 data 属性，事件委托读取）
+      for (const variant of ['slow', 'normal']) {
+        const url = variant === 'slow' ? card.audio.phrase_slow : card.audio.phrase_normal;
+        document
+          .querySelectorAll<HTMLElement>(`[data-practice-audio="${variant}"]`)
+          .forEach((el) => {
+            el.dataset.src = url;
+          });
+      }
+
+      // 翻面/评分按钮重置
+      const flipBtn = document.querySelector<HTMLElement>('[data-action="flip"]')!;
+      const gradeBar = document.querySelector<HTMLElement>('.practice-grade-bar')!;
+      flipBtn.hidden = false;
+      gradeBar.hidden = true;
+    }
+
+    function escapeHtml(s: string): string {
+      return s
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;');
+    }
+
+    function updateProgressBar() {
+      const total = queue.length;
+      const pct = total === 0 ? 0 : Math.min(100, Math.round((cursor / total) * 100));
+      const bar = document.getElementById('practice-progress-bar');
+      if (bar) (bar as HTMLElement).style.width = pct + '%';
+      const stat = document.querySelector<HTMLElement>('[data-stat="position"]');
+      if (stat) {
+        stat.textContent = total === 0 ? '—' : `${Math.min(cursor + 1, total)} / ${total}`;
+      }
+    }
+
+    // ---------- 翻面 / 评分 ----------
+    async function flip() {
+      const root = document.getElementById('practice-card')!;
+      if (root.dataset.side === 'back') return;
+      root.dataset.side = 'back';
+      document.querySelector<HTMLElement>('[data-action="flip"]')!.hidden = true;
+      document.querySelector<HTMLElement>('.practice-grade-bar')!.hidden = false;
+
+      // 拉当前卡片 progress（可能不存在 → 新卡）
+      const card = CARDS_BY_ID.get(queue[cursor]);
+      if (!card) return;
+      const existing = await getProgress(card.id);
+      const p = existing ?? newCardProgress(card.id);
+      updateGradePreviews(p);
+    }
+
+    async function grade(g: Grade) {
+      const card = CARDS_BY_ID.get(queue[cursor]);
+      if (!card) return;
+
+      const existing = await getProgress(card.id);
+      const before = existing ?? newCardProgress(card.id);
+      const after = review(before, g, Date.now());
+      await putProgress(after);
+      sessionStats[g] += 1;
+
+      cursor += 1;
+      if (cursor >= queue.length) {
+        await finishSession();
+      } else {
+        updateProgressBar();
+        renderCard(CARDS_BY_ID.get(queue[cursor])!);
+      }
+    }
+
+    async function finishSession() {
+      updateProgressBar();
+      await setMeta(META_KEYS.lastSessionAt, Date.now());
+
+      const detail = document.querySelector<HTMLElement>('[data-done-detail]');
+      if (detail) {
+        const reviewedTotal = sessionStats.again + sessionStats.good + sessionStats.easy;
+        detail.textContent =
+          `本轮 ${reviewedTotal} 张：` +
+          `🟢 ${sessionStats.easy} 很会 · ` +
+          `🟡 ${sessionStats.good} 一般 · ` +
+          `🔴 ${sessionStats.again} 忘了`;
+      }
+      showView('done');
+    }
+
+    // ---------- 音频 ----------
+    let audioEl: HTMLAudioElement | null = null;
+
+    function playAudio(src: string, btn?: HTMLElement) {
+      if (!src) return;
+      if (!audioEl) audioEl = new Audio();
+      if (audioEl.src !== location.origin + src && !audioEl.src.endsWith(src)) {
+        audioEl.src = src;
+      } else {
+        audioEl.currentTime = 0;
+      }
+      document
+        .querySelectorAll('.practice-audio-btn.is-playing')
+        .forEach((el) => el.classList.remove('is-playing'));
+      btn?.classList.add('is-playing');
+      const cleanup = () => btn?.classList.remove('is-playing');
+      audioEl.onended = cleanup;
+      audioEl.onerror = cleanup;
+      audioEl.onpause = cleanup;
+      audioEl.play().catch(cleanup);
+    }
+
+    // ---------- 队列构建 ----------
+    async function rebuildQueue(extraNew = 0) {
+      const allProgress = await getAllProgress();
+      const allIds = ALL_CARDS.map((c) => c.id);
+      // 新卡排序：essential 优先、tier 升序、id 字典序
+      const essentialMap = new Map(ALL_CARDS.map((c) => [c.id, c]));
+      const newOrderPriority = (id: string) => {
+        const c = essentialMap.get(id);
+        if (!c) return 9999;
+        return (c.is_essential ? 0 : 1000) + c.tier * 100;
+      };
+      queue = buildQueue(allIds, allProgress, {
+        now: Date.now(),
+        dailyNewLimit: 20 + extraNew,
+        newOrderPriority,
+      });
+      cursor = 0;
+      sessionStats = { again: 0, good: 0, easy: 0 };
+    }
+
+    async function start(extraNew = 0) {
+      try {
+        await openDb();
+        await ensureInstalled();
+        await rebuildQueue(extraNew);
+
+        if (queue.length === 0) {
+          // 空队列：算下一个最早到期的卡片
+          const all = await getAllProgress();
+          const nextDue = all
+            .filter((p) => p.total_reviews > 0)
+            .map((p) => p.due)
+            .sort((a, b) => a - b)[0];
+          const detail = document.querySelector<HTMLElement>('[data-empty-detail]');
+          if (detail) {
+            detail.textContent = nextDue
+              ? `下一张到期：${dueLabel({ due: nextDue } as CardProgress, Date.now())}`
+              : '还没有任何练过的卡。点下方按钮开始。';
+          }
+          // bucketize 统计放进 title 旁边可见
+          const stats = bucketize(
+            ALL_CARDS.map((c) => c.id),
+            all,
+            Date.now(),
+          );
+          const title = document.querySelector<HTMLElement>('[data-empty-title]');
+          if (title) {
+            if (stats.new === 0 && stats.due === 0) {
+              title.textContent = '今天没什么要练的';
+            } else if (stats.new > 0) {
+              title.textContent = '今日新卡已练完';
+            }
+          }
+          showView('empty');
+          return;
+        }
+
+        updateProgressBar();
+        renderCard(CARDS_BY_ID.get(queue[cursor])!);
+        showView('card');
+      } catch (e) {
+        console.error(e);
+        setError((e as Error).message);
+      }
+    }
+
+    // ---------- 事件委托 ----------
+    document.addEventListener('click', async (e) => {
+      const target = e.target as HTMLElement;
+
+      // 音频
+      const audioBtn = target.closest<HTMLElement>('[data-practice-audio]');
+      if (audioBtn) {
+        const src = audioBtn.dataset.src;
+        if (src) playAudio(src, audioBtn);
+        return;
+      }
+
+      // 翻面
+      if (target.closest('[data-action="flip"]')) {
+        flip();
+        return;
+      }
+
+      // 评分
+      const gradeBtn = target.closest<HTMLElement>('[data-grade]');
+      if (gradeBtn) {
+        const g = gradeBtn.dataset.grade as Grade;
+        if (g) grade(g);
+        return;
+      }
+
+      // 再来一轮 / 多练新的
+      if (target.closest('[data-action="practice-again"]')) {
+        start();
+        return;
+      }
+      if (target.closest('[data-action="practice-more"]')) {
+        start(10);
+        return;
+      }
+    });
+
+    // 键盘快捷键：空格翻面、1/2/3 评分
+    document.addEventListener('keydown', (e) => {
+      if (e.target instanceof HTMLInputElement || e.target instanceof HTMLTextAreaElement) return;
+      const root = document.getElementById('practice-card');
+      const visible = !document.getElementById('practice-view-card')?.hidden;
+      if (!visible || !root) return;
+
+      if (e.key === ' ' || e.key === 'Spacebar') {
+        if (root.dataset.side === 'front') {
+          e.preventDefault();
+          flip();
+        }
+      } else if (root.dataset.side === 'back') {
+        if (e.key === '1') grade('again');
+        else if (e.key === '2') grade('good');
+        else if (e.key === '3') grade('easy');
+      }
+    });
+
+    // ---------- 启动 ----------
+    start();
+  </script>
+</Layout>
