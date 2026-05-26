@@ -1,0 +1,165 @@
+/*
+ * 功能：全站 design tokens 与 base styles。所有颜色、字体、阴影、圆角、间距以 CSS 变量定义，
+ *       便于在不动 Tailwind 配置的情况下微调视觉风格。
+ * 输入：被 src/pages/index.astro 等页面的 <Layout> 引入。
+ * 输出：定义 :root 变量、html/body base、@font-face、滚动条样式等。
+ * 依赖：tailwindcss (preflight 与 utilities)
+ * 在项目中的作用：唯一的视觉真理来源。改色、改字体、改卡片圆角，都从这里下手。
+ */
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* ------------------------------------------------------------------ */
+/* Design tokens                                                       */
+/* ------------------------------------------------------------------ */
+
+:root {
+  /* Base palette — 借 Ogden 站米黄底 + 深棕字 */
+  --paper: #faf5ec;
+  --paper-soft: #f4ecdc;
+  --ink: #2a221c;
+  --ink-soft: #4a3f33;
+  --muted: #8a7c6c;
+  --accent: #c4661f;
+  --accent-soft: #e6a35a;
+
+  /* Card surface */
+  --card-bg: #fffaf0;
+  --card-border: #e8dcc5;
+  --card-shadow: rgba(74, 63, 51, 0.08);
+  --card-shadow-soft: rgba(74, 63, 51, 0.05);
+
+  /* 8 个场景 + Uzbek 的色板（同时给 token 和暗色变体） */
+  --scene-essentials: #f4c842; /* yellow */
+  --scene-essentials-soft: #faf0c8;
+
+  --scene-money: #5fa872; /* green */
+  --scene-money-soft: #dceedc;
+
+  --scene-transport: #5b8bb8; /* blue */
+  --scene-transport-soft: #d8e6f0;
+
+  --scene-food: #c45a4f; /* red */
+  --scene-food-soft: #f4d8d4;
+
+  --scene-lodging: #8a6db5; /* purple */
+  --scene-lodging-soft: #e4dcf0;
+
+  --scene-shopping: #e08847; /* orange */
+  --scene-shopping-soft: #f8dcc4;
+
+  --scene-emergency: #4a4f5a; /* slate */
+  --scene-emergency-soft: #d4d6db;
+
+  --scene-chat: #8a8580; /* warm gray */
+  --scene-chat-soft: #e0ddd8;
+
+  --scene-uzbek: #1f8a70; /* uzbek flag-inspired teal */
+  --scene-uzbek-soft: #c8e6dc;
+
+  /* Typography scale */
+  --fs-cyr: clamp(1.25rem, 4.5vw, 1.65rem);
+  --fs-trans: clamp(0.9rem, 3vw, 1.05rem);
+  --fs-zh: clamp(1rem, 3.5vw, 1.2rem);
+  --fs-literal: 0.78rem;
+  --fs-meta: 0.72rem;
+
+  /* Spacing */
+  --gap-card: 0.875rem;
+  --gap-section: 2rem;
+}
+
+/* ------------------------------------------------------------------ */
+/* Web fonts — 通过 Google Fonts 在 Layout 里 preconnect + link，         */
+/*             这里只声明回退栈。                                       */
+/* ------------------------------------------------------------------ */
+
+/* ------------------------------------------------------------------ */
+/* Base                                                                */
+/* ------------------------------------------------------------------ */
+
+html {
+  background: var(--paper);
+  color: var(--ink);
+  font-family: 'PT Serif', 'Noto Serif SC', Georgia, serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
+}
+
+body {
+  min-height: 100vh;
+  background:
+    radial-gradient(ellipse at top, rgba(245, 232, 200, 0.6), transparent 60%),
+    var(--paper);
+}
+
+/* 西里尔字母数字混排时的微调 */
+.cyr {
+  font-feature-settings: 'liga' 1, 'kern' 1;
+  letter-spacing: 0.005em;
+}
+
+/* 拉丁音译 — 等宽风格更易扫读 */
+.trans {
+  font-family: 'JetBrains Mono', ui-monospace, SFMono-Regular, monospace;
+  font-size: var(--fs-trans);
+  color: var(--ink-soft);
+  letter-spacing: 0.02em;
+}
+
+/* 字面直译 — 灰、小、不抢戏 */
+.literal {
+  font-size: var(--fs-literal);
+  color: var(--muted);
+  font-style: italic;
+}
+
+/* ------------------------------------------------------------------ */
+/* Scrollbar — 让米黄底上的滚动条不突兀                                  */
+/* ------------------------------------------------------------------ */
+
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+::-webkit-scrollbar-thumb {
+  background: var(--card-border);
+  border-radius: 4px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: var(--muted);
+}
+
+/* ------------------------------------------------------------------ */
+/* Card surface utility — 让 Card.astro 共用                            */
+/* ------------------------------------------------------------------ */
+
+.card-surface {
+  background: var(--card-bg);
+  border: 1px solid var(--card-border);
+  border-radius: 14px;
+  box-shadow: 0 1px 0 var(--card-shadow), 0 2px 8px var(--card-shadow-soft);
+  transition: box-shadow 160ms ease, transform 160ms ease;
+}
+.card-surface:hover {
+  box-shadow: 0 2px 0 var(--card-shadow), 0 6px 16px var(--card-shadow-soft);
+}
+
+/* ------------------------------------------------------------------ */
+/* 安全区域与底部 — iOS PWA 用                                          */
+/* ------------------------------------------------------------------ */
+
+@supports (padding: max(0px)) {
+  .safe-pb {
+    padding-bottom: max(1rem, env(safe-area-inset-bottom));
+  }
+  .safe-pt {
+    padding-top: max(1rem, env(safe-area-inset-top));
+  }
+}
