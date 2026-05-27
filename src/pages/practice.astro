@@ -118,7 +118,7 @@ const cardsJson = JSON.stringify(cards);
           翻面 <span class="opacity-50 text-xs ml-1 hidden md:inline">[空格]</span>
         </button>
 
-        <div class="practice-grade-bar grid grid-cols-3 gap-2" hidden>
+        <div class="practice-grade-bar grid grid-cols-3 gap-2.5" hidden>
           <button type="button" data-grade="again" class="practice-btn-grade practice-btn-again">
             <span class="text-base">忘了</span>
             <span class="text-[0.65rem] opacity-70" data-grade-preview="again">~1 小时</span>
@@ -207,13 +207,17 @@ const cardsJson = JSON.stringify(cards);
     .practice-audio-btn {
       display: inline-flex;
       align-items: center;
-      gap: 0.35rem;
-      padding: 0.5rem 0.9rem;
+      justify-content: center;
+      gap: 0.4rem;
+      /* iOS HIG / Material 推荐 ≥ 44px tap target */
+      min-height: 44px;
+      padding: 0.55rem 1.05rem;
       border-radius: 999px;
       background: var(--paper-soft);
       color: var(--ink-soft);
       font-family: ui-sans-serif, system-ui, sans-serif;
-      font-size: 0.85rem;
+      font-size: 0.9rem;
+      line-height: 1;
       border: 1px solid var(--card-border);
       transition: background 140ms ease, transform 80ms ease;
     }
@@ -223,6 +227,10 @@ const cardsJson = JSON.stringify(cards);
     .practice-audio-btn.is-playing {
       background: var(--accent-soft);
       color: var(--ink);
+    }
+    /* 卡背面的次级音频按钮——用 !important 覆盖时也要保证 tap target */
+    .practice-audio-btn.\!py-1 {
+      min-height: 38px;
     }
 
     .practice-btn-primary {
@@ -270,13 +278,15 @@ const cardsJson = JSON.stringify(cards);
       flex-direction: column;
       align-items: center;
       justify-content: center;
+      /* 评分是最高频操作——给到 64px，手指难按错 */
+      min-height: 64px;
       padding: 0.85rem 0.4rem;
       border-radius: 12px;
       font-family: ui-sans-serif, system-ui, sans-serif;
       font-weight: 600;
       transition: transform 80ms ease, filter 140ms ease;
       border: 1px solid var(--card-border);
-      gap: 0.15rem;
+      gap: 0.2rem;
     }
     .practice-btn-grade:active {
       transform: scale(0.97);

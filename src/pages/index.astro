@@ -19,28 +19,31 @@ const uzbekCount = (uzbekJson as unknown[]).length;
 ---
 
 <Layout>
-  {/* 右上角工具条：练习 + 数据 + 彩蛋 */}
-  <div class="fixed top-3 right-3 z-30 flex gap-2 safe-pt">
+  {/* 右上角工具条：手机 emoji-only、≥sm 才显文字 */}
+  <div class="fixed top-3 right-3 z-30 flex gap-1.5 safe-pt">
     <a
       href="/uzbek"
       class="home-tool-link home-tool-uzbek"
       aria-label="乌兹别克语彩蛋"
     >
-      🇺🇿 彩蛋
+      <span class="home-tool-icon">🇺🇿</span>
+      <span class="home-tool-text">彩蛋</span>
     </a>
     <a
       href="/practice"
       class="home-tool-link"
       aria-label="进入练习"
     >
-      练习
+      <span class="home-tool-icon">📝</span>
+      <span class="home-tool-text">练习</span>
     </a>
     <a
       href="/data"
       class="home-tool-link"
       aria-label="数据与备份"
     >
-      数据
+      <span class="home-tool-icon">💾</span>
+      <span class="home-tool-text">数据</span>
     </a>
   </div>
 
@@ -127,13 +130,13 @@ const uzbekCount = (uzbekJson as unknown[]).length;
     </p>
   </footer>
 
-  {/* 浮动入口：今日 N 张待练（小屏沉底、大屏右下） */}
+  {/* 浮动入口：今日 N 张待练；iPhone 安全区做让位避开 home indicator */}
   <a
     href="/practice"
     id="home-practice-fab"
-    class="fixed bottom-4 right-4 z-30 inline-flex items-center gap-2 px-4 py-2.5 rounded-full
+    class="fixed right-4 z-30 inline-flex items-center justify-center gap-2 px-5 py-3 rounded-full
            text-sm font-sans font-semibold shadow-lg transition-all opacity-0 translate-y-2 pointer-events-none"
-    style="background: var(--ink); color: var(--paper);"
+    style="background: var(--ink); color: var(--paper); min-height: 48px; bottom: max(1rem, env(safe-area-inset-bottom));"
     aria-label="进入练习"
     hidden
   >
@@ -186,15 +189,37 @@ const uzbekCount = (uzbekJson as unknown[]).length;
   .home-tool-link {
     display: inline-flex;
     align-items: center;
-    padding: 0.35rem 0.85rem;
+    justify-content: center;
+    gap: 0.3rem;
+    /* mobile：紧凑圆形 tap target；保证 ≥ 36px 高、约 36px 宽 */
+    min-width: 38px;
+    min-height: 38px;
+    padding: 0.35rem 0.55rem;
     border-radius: 999px;
-    background: rgba(255, 250, 240, 0.85);
+    background: rgba(255, 250, 240, 0.9);
     backdrop-filter: blur(6px);
     border: 1px solid var(--card-border);
     color: var(--ink-soft);
     font-family: ui-sans-serif, system-ui, sans-serif;
     font-size: 0.78rem;
+    line-height: 1;
     transition: background 140ms ease, color 140ms ease;
+  }
+  .home-tool-icon {
+    font-size: 1.05rem;
+    line-height: 1;
+  }
+  .home-tool-text {
+    /* mobile：隐藏文字、纯 emoji；≥ sm (640px) 显文字 */
+    display: none;
+  }
+  @media (min-width: 640px) {
+    .home-tool-link {
+      padding: 0.4rem 0.85rem;
+    }
+    .home-tool-text {
+      display: inline;
+    }
   }
   .home-tool-link:hover {
     background: var(--paper-soft);
