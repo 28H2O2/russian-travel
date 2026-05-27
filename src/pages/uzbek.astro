@@ -1,0 +1,106 @@
+---
+// 功能：乌兹别克语彩蛋页。15 张礼貌包按 4 个 category 分组展示。
+//       不进 SRS、不进必备柜——纯文化加分项。
+// 输入：src/data/uzbek.json
+// 输出：单页面 /uzbek
+// 依赖：Layout, UzbekCard, uzbek.json, types
+// 在项目中的作用：v2 彩蛋页。当用户对俄语熟了，留这 15 句给"装一下本地人"用。
+
+import Layout from '../layouts/Layout.astro';
+import UzbekCard from '../components/UzbekCard.astro';
+import type { UzbekCard as UzbekCardType, UzbekCategory } from '../lib/types';
+import uzbekJson from '../data/uzbek.json';
+
+const cards = uzbekJson as UzbekCardType[];
+
+const CATEGORY_META: Record<UzbekCategory, { name: string; icon: string; blurb: string }> = {
+  greeting: {
+    name: '招呼',
+    icon: '🤝',
+    blurb: '一句 Salom 就能打开当地人话匣子',
+  },
+  thanks: {
+    name: '感谢与礼貌',
+    icon: '🙏',
+    blurb: 'Rahmat 比 Спасибо 多一份诚意',
+  },
+  food: {
+    name: '餐桌',
+    icon: '🍲',
+    blurb: '主人继续添菜时，这是终结技',
+  },
+  bazaar: {
+    name: '巴扎',
+    icon: '🛍️',
+    blurb: '议价时换乌兹别克语，气氛立刻不一样',
+  },
+};
+
+const categoryOrder: UzbekCategory[] = ['greeting', 'thanks', 'food', 'bazaar'];
+const grouped = categoryOrder.map((cat) => ({
+  cat,
+  meta: CATEGORY_META[cat],
+  cards: cards.filter((c) => c.category === cat),
+}));
+---
+
+<Layout
+  title="乌兹别克语礼貌包 · 俄语生存包"
+  description="15 句关键乌兹别克语彩蛋：让你不止能用俄语沟通，还能让当地人会心一笑。"
+>
+  {/* 右上角返回 */}
+  <div class="fixed top-3 right-3 z-30 flex gap-2 safe-pt">
+    <a href="/" class="home-tool-link" aria-label="返回首页">← 返回</a>
+  </div>
+
+  {/* 头部 */}
+  <header class="max-w-3xl mx-auto px-4 pt-10 pb-6 md:pt-14 text-center">
+    <p class="text-xs font-sans uppercase tracking-[0.3em] text-muted mb-2">
+      🇺🇿 BONUS · UZBEK POLITENESS PACK
+    </p>
+    <h1 class="font-serif text-3xl md:text-5xl font-bold text-ink leading-tight">
+      <span style="color: var(--scene-uzbek);">Salom!</span> 乌兹别克语彩蛋
+    </h1>
+    <p class="mt-4 text-sm md:text-base text-ink-soft font-serif italic">
+      15 句让本地人会心一笑的礼貌包
+    </p>
+    <p class="mt-5 text-xs md:text-sm text-muted max-w-2xl mx-auto leading-relaxed">
+      这里的内容不进 SRS 也不进必备柜——它们是「锦上添花」。在 UZ，会一两句俄语足以生存；
+      但偶尔切换到乌兹别克语，能让你从「外国游客」变成「会本地话的外国人」。
+      <br />
+      <span class="block mt-3 text-[0.7rem]">
+        书写用 1995 年起的官方拉丁字母。<code class="px-1 rounded bg-stone-100">ʻ</code> 是
+        modifier letter（修正符），<code class="px-1 rounded bg-stone-100">oʻ</code> /
+        <code class="px-1 rounded bg-stone-100">gʻ</code> 与 o/g 发音不同。
+      </span>
+    </p>
+  </header>
+
+  {/* 主内容：按 category 分组 */}
+  <main class="max-w-5xl mx-auto px-4 pb-12">
+    {grouped.map(({ cat, meta, cards: catCards }) => (
+      <section class="mb-10" id={`uzbek-${cat}`}>
+        <div class="flex items-baseline gap-3 mb-1">
+          <span class="text-xl">{meta.icon}</span>
+          <h2 class="font-serif text-2xl font-bold text-ink">{meta.name}</h2>
+          <span class="text-xs text-muted ml-auto font-sans">{catCards.length} 张</span>
+        </div>
+        <p class="text-xs text-muted italic mb-4 ml-8">{meta.blurb}</p>
+        <div class="grid gap-3 md:grid-cols-2">
+          {catCards.map((c) => <UzbekCard card={c} />)}
+        </div>
+      </section>
+    ))}
+  </main>
+
+  {/* 底部说明 */}
+  <footer class="max-w-3xl mx-auto px-4 py-12 text-xs font-sans text-muted text-center space-y-2 leading-relaxed">
+    <p>
+      ⚠ 内容由 LLM 生成、未经乌兹别克语母语者审校。现场使用后欢迎在 GitHub 反馈。
+    </p>
+    <p>
+      <strong style="color: var(--scene-uzbek);">实测心法</strong>：先用一句 Uzbek 开场（Salom / Rahmat），
+      之后再切到俄语主菜——这样对方既感受到尊重、又不会因你说不流利的乌兹别克语进入卡壳。
+    </p>
+  </footer>
+</Layout>

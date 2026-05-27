@@ -1,0 +1,129 @@
+---
+// 功能：乌兹别克语彩蛋卡片。结构 = latin + 发音 + 中文 + 双音频 + russian_equivalent +
+//       context + why_uzbek（彩蛋专属、突出显示）
+// 输入：card prop (UzbekCard 类型)
+// 输出：一个 <article> 带 uzbek 主题色边框
+// 依赖：types
+// 在项目中的作用：/uzbek 页面的视觉单元。区别于 Russian Card：所有信息直接平铺、
+//             无展开折叠（彩蛋只 15 张、信息密度低不必折叠）
+
+import type { UzbekCard } from '../lib/types';
+
+interface Props {
+  card: UzbekCard;
+}
+
+const { card } = Astro.props;
+---
+
+<article class="uzbek-card card-surface relative p-5 md:p-6 flex flex-col gap-3">
+  {/* 主体：latin + 发音 + 中文 */}
+  <div class="flex flex-col gap-1">
+    <p class="latin text-2xl md:text-3xl font-bold text-ink leading-snug">
+      {card.latin}
+    </p>
+    <p class="trans">{card.pronunciation}</p>
+    <p class="text-base md:text-lg text-ink-soft leading-snug">{card.chinese}</p>
+  </div>
+
+  {/* 音频按钮 */}
+  <div class="flex flex-wrap items-center gap-2 pt-1">
+    <button
+      type="button"
+      data-uzbek-audio="slow"
+      data-src={card.audio.phrase_slow}
+      class="practice-audio-btn"
+    >
+      🔉 慢
+    </button>
+    <button
+      type="button"
+      data-uzbek-audio="normal"
+      data-src={card.audio.phrase_normal}
+      class="practice-audio-btn"
+    >
+      🔊 正常
+    </button>
+  </div>
+
+  {/* 上下文 */}
+  <p class="text-xs text-ink-soft leading-relaxed">
+    <span class="text-[0.6rem] font-sans uppercase tracking-widest text-muted mr-2">何时用</span>
+    {card.context}
+  </p>
+
+  {/* 俄语等价句（如果有） */}
+  {card.russian_equivalent && (
+    <p class="text-xs text-muted leading-relaxed">
+      <span class="text-[0.6rem] font-sans uppercase tracking-widest text-muted mr-2">俄语对应</span>
+      <span class="cyr">{card.russian_equivalent}</span>
+    </p>
+  )}
+
+  {/* ★ why_uzbek —— 彩蛋灵魂 */}
+  <div class="uzbek-why">
+    <span class="uzbek-why-label">为什么不说俄语</span>
+    <p>{card.why_uzbek}</p>
+  </div>
+</article>
+
+<style is:global>
+  .uzbek-card {
+    border-left: 4px solid var(--scene-uzbek);
+  }
+  .uzbek-card .latin {
+    /* 比 Card 的 .cyr 略宽，体现拉丁字符 + 乌兹别克语 modifier letter ʻ */
+    letter-spacing: 0.005em;
+    font-family: 'PT Serif', 'Noto Serif SC', Georgia, serif;
+  }
+
+  .uzbek-why {
+    margin-top: 0.25rem;
+    padding: 0.7rem 0.85rem;
+    border-radius: 10px;
+    background: var(--scene-uzbek-soft);
+    color: var(--ink);
+    border-left: 3px solid var(--scene-uzbek);
+  }
+  .uzbek-why-label {
+    display: block;
+    font-family: ui-sans-serif, system-ui, sans-serif;
+    font-size: 0.6rem;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: var(--scene-uzbek);
+    margin-bottom: 0.35rem;
+    font-weight: 600;
+  }
+  .uzbek-why p {
+    font-size: 0.82rem;
+    line-height: 1.6;
+    color: var(--ink-soft);
+  }
+</style>
+
+<script>
+  // 音频播放（独立于 practice 页的播放器，但样式类共享）
+  let audioEl: HTMLAudioElement | null = null;
+
+  document.addEventListener('click', (e) => {
+    const btn = (e.target as HTMLElement).closest<HTMLElement>('[data-uzbek-audio]');
+    if (!btn) return;
+    const src = btn.dataset.src;
+    if (!src) return;
+
+    if (!audioEl) audioEl = new Audio();
+    audioEl.pause();
+    audioEl.src = src;
+
+    document.querySelectorAll('.practice-audio-btn.is-playing')
+      .forEach((el) => el.classList.remove('is-playing'));
+    btn.classList.add('is-playing');
+
+    const cleanup = () => btn.classList.remove('is-playing');
+    audioEl.onended = cleanup;
+    audioEl.onerror = cleanup;
+    audioEl.onpause = cleanup;
+    audioEl.play().catch(cleanup);
+  });
+</script>

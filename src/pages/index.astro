@@ -9,16 +9,25 @@ import Layout from '../layouts/Layout.astro';
 import EssentialBar from '../components/EssentialBar.astro';
 import SceneSection from '../components/SceneSection.astro';
 import { getScenes, getCardsByScene, getEssentialCards, getCards } from '../lib/data';
+import uzbekJson from '../data/uzbek.json';
 
 const scenes = getScenes();
 const essentials = getEssentialCards(10);
 const totalCards = getCards().length;
 const v2Total = scenes.reduce((sum, s) => sum + s.v2_target, 0);
+const uzbekCount = (uzbekJson as unknown[]).length;
 ---
 
 <Layout>
-  {/* 右上角工具条：练习 + 数据 */}
+  {/* 右上角工具条：练习 + 数据 + 彩蛋 */}
   <div class="fixed top-3 right-3 z-30 flex gap-2 safe-pt">
+    <a
+      href="/uzbek"
+      class="home-tool-link home-tool-uzbek"
+      aria-label="乌兹别克语彩蛋"
+    >
+      🇺🇿 彩蛋
+    </a>
     <a
       href="/practice"
       class="home-tool-link"
@@ -47,7 +56,9 @@ const v2Total = scenes.reduce((sum, s) => sum + s.v2_target, 0);
       俄语生存包 · 给乌兹别克斯坦旅行者
     </p>
     <p class="mt-4 text-xs md:text-sm text-muted max-w-2xl mx-auto leading-relaxed">
-      {totalCards} / {v2Total} 张短语卡 · 含发音、对方可能的回话、可替换槽、Uzbekistan 当地注脚 · 离线可用 · 无注册无收集
+      {totalCards} / {v2Total} 张俄语短语卡 · +
+      <a href="/uzbek" class="underline hover:text-accent">{uzbekCount} 句乌兹别克语彩蛋 🇺🇿</a> ·
+      含发音、对方可能的回话、可替换槽、Uzbekistan 当地注脚 · 离线可用 · 无注册无收集
     </p>
   </header>
 
@@ -188,5 +199,16 @@ const v2Total = scenes.reduce((sum, s) => sum + s.v2_target, 0);
   .home-tool-link:hover {
     background: var(--paper-soft);
     color: var(--ink);
+  }
+  /* 彩蛋链接：用 UZ 国旗 teal */
+  .home-tool-uzbek {
+    background: var(--scene-uzbek-soft);
+    border-color: var(--scene-uzbek);
+    color: var(--scene-uzbek);
+    font-weight: 600;
+  }
+  .home-tool-uzbek:hover {
+    background: var(--scene-uzbek);
+    color: var(--paper);
   }
 </style>
