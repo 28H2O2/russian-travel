@@ -96,7 +96,10 @@ export type UzbekCategory = 'greeting' | 'thanks' | 'food' | 'bazaar';
 export interface UzbekCard {
   id: string;                    // 'uzbek.<category>.<short>'
   category: UzbekCategory;
-  latin: string;                 // 'Salom!' — 乌兹别克语拉丁字母
+  latin: string;                 // 'Salom!' — 1995 起的官方拉丁字母
+  cyrillic: string;              // 'Салом!' — 苏联沿用至今的西里尔字母，
+                                 //   街头招牌 / 老一辈 / 宗教场合常见。
+                                 //   双显设计：拉丁主、西里尔副。
   pronunciation: string;         // 'sa-LOM' — 发音式拉丁化（大写=重音）
   chinese: string;
   russian_equivalent?: string;   // 对应俄语句（可空——有些更直接表达没俄语对应）

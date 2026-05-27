@@ -17,10 +17,14 @@ const { card } = Astro.props;
 ---
 
 <article class="uzbek-card card-surface relative p-5 md:p-6 flex flex-col gap-3">
-  {/* 主体：latin + 发音 + 中文 */}
+  {/* 主体：latin (主) + cyrillic (副) + 发音 + 中文 */}
   <div class="flex flex-col gap-1">
     <p class="latin text-2xl md:text-3xl font-bold text-ink leading-snug">
       {card.latin}
+    </p>
+    <p class="uzbek-cyr text-base md:text-lg text-ink-soft leading-snug">
+      <span class="uzbek-cyr-label">КИРИЛЛ</span>
+      {card.cyrillic}
     </p>
     <p class="trans">{card.pronunciation}</p>
     <p class="text-base md:text-lg text-ink-soft leading-snug">{card.chinese}</p>
@@ -75,6 +79,26 @@ const { card } = Astro.props;
     /* 比 Card 的 .cyr 略宽，体现拉丁字符 + 乌兹别克语 modifier letter ʻ */
     letter-spacing: 0.005em;
     font-family: 'PT Serif', 'Noto Serif SC', Georgia, serif;
+  }
+  /* 西里尔副显——苏联沿用至今，街头招牌 + 老一辈用 */
+  .uzbek-cyr {
+    font-family: 'PT Serif', 'Noto Serif SC', Georgia, serif;
+    color: var(--ink-soft);
+    display: flex;
+    align-items: baseline;
+    gap: 0.5rem;
+    flex-wrap: wrap;
+  }
+  .uzbek-cyr-label {
+    display: inline-block;
+    font-family: ui-sans-serif, system-ui, sans-serif;
+    font-size: 0.55rem;
+    letter-spacing: 0.15em;
+    color: var(--muted);
+    padding: 0.1rem 0.4rem;
+    border-radius: 3px;
+    background: var(--paper-soft);
+    flex-shrink: 0;
   }
 
   .uzbek-why {
