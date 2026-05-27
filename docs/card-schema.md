@@ -25,8 +25,10 @@ interface Card {
   literal: string;               // 字面直译，让用户看见结构
 
   audio: {
-    phrase_normal: string;       // /audio/<scene>/<id>_normal.mp3
-    phrase_slow: string;         // /audio/<scene>/<id>_slow.mp3
+    phrase_normal: string;       // /audio/<scene>/<scene>_NNNN_normal.mp3
+    phrase_slow: string;         // /audio/<scene>/<scene>_NNNN_slow.mp3
+                                 // NNNN 是该 scene 内的 4 位流水号（0001-0025），
+                                 // 与 id 之间没有强对应；新加卡递增即可
   };
 
   politeness: Politeness;
@@ -36,7 +38,8 @@ interface Card {
     cyrillic: string;
     trans: string;
     cn: string;
-  }[];                           // ★ 不能是空数组！本项目核心创新字段
+  }[];                           // ★ 本项目核心创新字段。通常 1-3 条；
+                                 // 仅"独词应答"类卡允许空——见下方专节
 
   slots: {
     label: string;               // 中文：替换槽含义
@@ -96,10 +99,24 @@ interface Card {
 
 **为什么重要**：你能说出去不算赢，你能听懂对面那句才算赢。
 
-每张卡至少 1 条、推荐 2-3 条。每条要：
+绝大多数卡推荐 2-3 条。每条要：
 - 俄语母语者真实可能说出的话（**LLM 容易出现"教科书式"假回答**，写时刻意避免）
 - 简短（1-5 词），不要罗列整段
 - 中文翻译保留语气（如 "По счётчику" = "按表跳"，不是 "according to the meter"）
+
+### 允许空数组的例外
+
+"独词应答类"卡片本身就是别人问你时**你的回答**，没有"对方下一句"——这类不需要 likely_responses：
+
+| 类型 | 例 |
+|---|---|
+| 数字 | `Оди́н` / `Два` / `Ты́сяча` |
+| 是/否/好 | `Да` / `Нет` / `Хорошо́` / `Пожа́луйста` |
+| 方向 | `Пря́мо` / `Нале́во` / `Напра́во` |
+| 付款方式 | `Нали́чными` / `Ка́ртой` |
+| 堂食打包 | `Здесь` / `С собо́й` |
+
+任何完整句子（含问句、请求、陈述、抱怨、寒暄）都必须给至少 1 条。
 
 ## slots 字段
 

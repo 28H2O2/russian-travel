@@ -1,10 +1,11 @@
 ---
 // 功能：音频按钮。点击后用 HTMLAudioElement 播放给定路径的 mp3
-// 输入：src (mp3 路径), label (按钮文字, 如 "正常" / "慢")
-// 输出：一个圆角按钮 + 内联 <script> 处理点击
+// 输入：src (mp3 路径，如 /audio/transport/transport_0001_normal.mp3)
+//       label / variant 用于显示与样式
+// 输出：一个圆角按钮 + 全局 <script> 委托点击 + 播放视觉反馈
 // 依赖：无
-// 在项目中的作用：所有卡片、所有展开的 likely_responses / slots 共用的发音入口
-// 注意：v1 阶段音频文件是 silent stub；W2 用 Yandex SpeechKit 真生成
+// 在项目中的作用：所有卡片（包括 likely_responses / slots）共用的发音入口
+// 音频来源：Edge TTS (ru-RU-SvetlanaNeural) 离线预生成，详见 scripts/generate-tts.py
 
 interface Props {
   src: string;

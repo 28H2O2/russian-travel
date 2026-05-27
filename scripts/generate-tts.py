@@ -1,14 +1,16 @@
 #!/usr/bin/env python3
 """
 功能：用 Microsoft Edge Neural TTS 给 cards.json 中所有卡片生成俄语发音
-输入：src/data/cards.json
-输出：public/audio/<scene>/<id>_normal.mp3 + _slow.mp3
+输入：src/data/cards.json（按 cards[].audio.phrase_normal / phrase_slow 的路径写文件）
+输出：public/audio/<scene>/<scene>_NNNN_{normal|slow}.mp3
 如何运行：
     uv run --with edge-tts scripts/generate-tts.py
     # 或假设 edge-tts 已通过 uv tool install 装好：
     python3 scripts/generate-tts.py
 依赖：edge-tts (>= 7.x)、cards.json
-在项目中的作用：W2 起取代 generate-silent-stubs.sh 的"嘀"声，提供真发音
+在项目中的作用：v1 起所有 mp3 的主流水线。SKIP_EXISTING=True，增量补卡时只跑缺的；
+            失败的 mp3（< 100 字节）建议 `find public/audio -name '*.mp3' -size -100c -delete`
+            后再跑一次让它自动补齐。
 """
 
 from __future__ import annotations

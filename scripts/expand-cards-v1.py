@@ -16,10 +16,11 @@
 - verification_status：一律 ai_generated_unreviewed，不偷标 verified
 - likely_responses：每张至少 1 条，反映真实场景下对方最可能说的话
 - is_essential：跨 100 张精选 10 张钉顶（CLAUDE.md 约定）。
-  本脚本内新增的 5 张精选：yes / no / slower_please / card_accepted / this_one。
-  脚本运行后还需把原 20 张里 5 张降级：cheaper / how_much_to_center /
-  stop_here / no_meat / water / check_please（保留 hello_formal / thank_you /
-  sorry / dont_understand / how_much 不变）。最终 essential = 10。
+  本脚本里 5 张新精选：yes / no / slower_please / card_accepted / this_one。
+  脚本跑完后还需要手动 trim 原 20 张里的 6 张 essential 降级：
+    cheaper / how_much_to_center / stop_here / no_meat / water / check_please
+  保留原 5 张不变：hello_formal / thank_you / sorry / dont_understand / how_much
+  最终 essential 数 = 5（原保留）+ 5（本脚本新增）= 10。
 """
 
 from __future__ import annotations

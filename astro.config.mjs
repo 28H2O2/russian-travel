@@ -43,7 +43,9 @@ export default defineConfig({
         ],
       },
       workbox: {
-        // 预缓存：HTML / CSS / JS / SVG / PNG / 字体 / cards JSON / 所有 mp3
+        // 预缓存：HTML / CSS / JS / SVG / PNG / 字体 / 所有 mp3
+        //   注意：cards.json 不在 dist/ —— 它在 src/data/ 被 Vite 打进 hoisted JS chunk，
+        //   走 JS 入口直接 import。glob 里的 ',json' 实际只匹配 manifest.webmanifest 等元数据。
         globPatterns: [
           '**/*.{html,css,js,svg,png,webp,woff,woff2,json}',
           '**/audio/**/*.mp3',

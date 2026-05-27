@@ -1,10 +1,13 @@
 #!/usr/bin/env bash
-# 功能：为 cards.json 中所有卡片生成静音 mp3 占位文件
+# 功能：为 cards.json 中所有卡片生成可听见的"嘀"声 mp3 占位文件（440Hz / 330Hz）
 # 输入：src/data/cards.json (读取 audio.phrase_normal / audio.phrase_slow 路径)
-# 输出：public/audio/<scene>/*.mp3 (~3KB 的静音 mp3)
+# 输出：public/audio/<scene>/*.mp3 (~3KB 的 beep mp3)
 # 如何运行：bash scripts/generate-silent-stubs.sh
 # 依赖：ffmpeg、jq
-# 在项目中的作用：W1 阶段让 AudioButton 有可播放的目标文件；W2 用 Yandex TTS 替换
+# 在项目中的作用：
+#   ⚠️ 已退役 —— 实际音频由 scripts/generate-tts.py 用 Edge TTS 生成。
+#   保留此脚本只为离线无网时的应急 fallback（让 AudioButton 有 mp3 可点）。
+#   正常情况请用 generate-tts.py（含 SKIP_EXISTING，跑过的卡不会被这个脚本覆盖）。
 
 set -euo pipefail
 
