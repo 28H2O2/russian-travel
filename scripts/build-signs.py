@@ -48,6 +48,7 @@ SELECTIONS: list[dict] = [
         "literal": "Toshkent（塔什干）+ xalqaro（国际）+ aeroporti（机场）",
         "context": "落地塔什干第一眼就是这个蓝色大字招牌。注意它写的是乌兹别克语（不是俄语），用的是西里尔字母——因为这是老一辈仍然认得的拼法。",
         "local_note": "塔什干岛尔米尔机场 (TAS) 入夜后这个招牌会发蓝光，从远处就能认出。乌兹别克语 xalqaro = 国际，对应俄语 международный。",
+        "location_hint": "塔什干国际机场 TAS · 主航站楼正面夜景",
     },
     {
         "id": "airport.tashkent_apron_uzbekistan_airways",
@@ -61,6 +62,7 @@ SELECTIONS: list[dict] = [
         "literal": "TASHKENT = 塔什干；蓝色尾翼的鸟徽 = Uzbekistan Airways",
         "context": "停机坪视角的塔什干机场。屋顶 TASHKENT 是英文拼法（机场对国际旅客的标识），停的飞机是 Uzbekistan Airways（HY 航班代码）。",
         "local_note": "TAS 主要承运国是 Uzbekistan Airways。机场代码 TAS 来自俄语/乌兹别克语 ТАшкент 的前三字母。",
+        "location_hint": "塔什干国际机场 TAS · 停机坪，远处主航站楼",
     },
     {
         "id": "airport.tashkent_terminal_interior",
@@ -74,6 +76,7 @@ SELECTIONS: list[dict] = [
         "literal": "—",
         "context": "登机区典型场景。窗外可以看到 Uzbekistan Airways（绿色尾翼）和俄罗斯/独联体国家来的航班。",
         "local_note": "塔什干机场内的指示牌基本三语：UZ Latin / UZ Cyrillic / English，部分还有俄语。买东西、问路、过安检——比想象的好走。",
+        "location_hint": "塔什干国际机场 TAS · 国际出发候机区",
     },
     {
         "id": "airport.moscow_sheremetyevo_vintage",
@@ -87,6 +90,7 @@ SELECTIONS: list[dict] = [
         "literal": "МОСКВА = 莫斯科，ШЕРЕМЕТЬЕВО = 机场名（地名）",
         "context": "经典苏联时期的莫斯科 SVO 机场招牌。如果你从塔什干转莫斯科，这种字体的航站楼牌是会看到的标志性 motif。",
         "local_note": "Шереметьево（SVO）和 Домодедово（DME）是莫斯科两大机场。塔什干很多航线 transit MOW——会用到。",
+        "location_hint": "俄罗斯莫斯科 Sheremetyevo 机场 SVO · 苏联时期外墙招牌 · 非 UZ，字形示范",
     },
     {
         "id": "airport.tashkent_control_tower",
@@ -100,6 +104,7 @@ SELECTIONS: list[dict] = [
         "literal": "—",
         "context": "停机坪视角，远处是 TAS 的塔台。停的飞机大概率是 Uzbekistan Airways（蓝白涂装）。",
         "local_note": "TAS 是中亚最大机场之一。从塔什干到费尔干纳、撒马尔罕、努库斯都有内陆航班——便宜，比火车快。",
+        "location_hint": "塔什干国际机场 TAS · 停机坪 + 塔台一侧",
     },
 
     # ========= STREET (7) =========
@@ -115,6 +120,7 @@ SELECTIONS: list[dict] = [
         "literal": "Navoiy（人名 · 15 世纪诗人）+ ko'chasi（街）",
         "context": "塔什干典型的蓝色搪瓷路牌。所有主街都会有这种白字蓝底的牌子，挂在十字路口的灯柱上。",
         "local_note": "Alisher Navoiy 是乌兹别克民族诗圣，每个城市都有 Navoiy 街/广场/地铁站。看到这名字 = 在主干道附近。ko'chasi 等于俄语的 улица（街）。",
+        "location_hint": "塔什干 · Alisher Navoiy 街某十字路口",
     },
     {
         "id": "street.mustaqillik_bekati",
@@ -128,6 +134,7 @@ SELECTIONS: list[dict] = [
         "literal": "Mustaqillik（独立）+ maydoni（广场）+ bekati（站）",
         "context": "塔什干地铁站入口外墙。这是塔什干市中心最重要的站之一，邻近 Hilton、各国大使馆和 Tashkent City 综合体。",
         "local_note": "看到 БЕКАТИ / BEKATI 三个字基本就是地铁站。MAYDON / МАЙДОН = 广场，约等于俄语的 площадь。",
+        "location_hint": "塔什干地铁 · Mustaqillik 独立广场站入口外墙",
     },
     {
         "id": "street.metro_navigation_panel",
@@ -141,6 +148,7 @@ SELECTIONS: list[dict] = [
         "literal": "Chiqish（UZ）= Выход（RU）= Exit（EN）",
         "context": "2024 年更新过的塔什干地铁站内导向图。每个出口对应不同地标（如 Tashkent City Mall, Hilton, Конserваtoria）。",
         "local_note": "塔什干地铁内部导向是三语同框，对外国人友好——选 EXIT 4-5 通往 Tashkent City Mall, 选 EXIT 3 通往 Paxtakor 体育场。",
+        "location_hint": "塔什干地铁 · 2024 版站内导向图（站台层）",
     },
     {
         "id": "street.alisher_navoiy_station_platform",
@@ -154,6 +162,7 @@ SELECTIONS: list[dict] = [
         "literal": "—",
         "context": "全球最美地铁站之一。穹顶是仿撒马尔罕清真寺的几何装饰。蓝白涂装的列车上印着乌兹别克国旗色。",
         "local_note": "Alisher Navoiy 站位于 O'zbekiston 线，是市中心枢纽。车厢号 4022 这种 4 位数从苏联时期沿用至今。",
+        "location_hint": "塔什干地铁 · O'zbekiston 蓝线 Alisher Navoiy 站站台",
     },
     {
         "id": "street.bilingual_cyrillic_latin",
@@ -167,6 +176,7 @@ SELECTIONS: list[dict] = [
         "literal": "同一个地名 · 两种字母拼出来一样的发音",
         "context": "波黑 Mostar 入城牌。虽然不是 UZ，但这种「拉丁 + 西里尔同框」正是塔什干招牌的常态——同一个词用两套字母排版。",
         "local_note": "练习窍门：看到双语牌就用心比对——拉丁的 sh = 西里尔的 ш，gʻ = ғ，oʻ = ў。习惯了在塔什干认招牌速度会快 3 倍。",
+        "location_hint": "波黑 Mostar 入城牌 · 非 UZ，双字母同框示范",
     },
     {
         "id": "street.tashkent_loves_you",
@@ -180,6 +190,7 @@ SELECTIONS: list[dict] = [
         "literal": "城市 + 心 + 你",
         "context": "塔什干网红地标之一，类似 I♥NY。一般在 Furkat 街附近，正对着 KFC 和 Hilton。",
         "local_note": "拍照打卡点。但你会注意到：连官方文旅标都用英文 + UZ 拉丁，不再用西里尔。城市旅游业全面拉丁化是 2020 年后的事。",
+        "location_hint": "塔什干 · Furkat 街拍照地标（KFC / Hilton 对面）",
     },
     {
         "id": "street.metro_platform_chilanzar",
@@ -193,6 +204,7 @@ SELECTIONS: list[dict] = [
         "literal": "—",
         "context": "塔什干地铁 3 条线：Chilanzar（红）、O'zbekiston（蓝）、Yunusabad（绿）。蓝白列车是 Chilanzar 线的标志色。",
         "local_note": "票价 1400-1700 sum 一程（约 1 元人民币），地铁站内通常允许拍照但不能拍设施细节——2018 年前完全禁止拍照。",
+        "location_hint": "塔什干地铁 · Chilanzar 红线某站站台",
     },
 
     # ========= MARKET (6) =========
@@ -208,6 +220,7 @@ SELECTIONS: list[dict] = [
         "literal": "—",
         "context": "Chorsu 巴扎的标志性蓝色穹顶下，是塔什干最大的肉类集市。摊位前的小数字牌就是摊位编号（用来在巴扎里找路）。",
         "local_note": "Chorsu = 古波斯语「四条路口」。这里是塔什干老城心脏，从地铁 Chorsu 站出来步行 2 分钟。卖肉的几乎都是男性，按公斤报价。",
+        "location_hint": "塔什干 · Chorsu 巴扎肉类穹顶（地铁 Chorsu 站步行 2 分钟）",
     },
     {
         "id": "market.chorsu_vegetable_1969",
@@ -221,6 +234,7 @@ SELECTIONS: list[dict] = [
         "literal": "1969 = 摊位编号",
         "context": "Chorsu 巴扎蔬菜区。每个摊位下方都有这种白底蓝字的摊位号，由市场管委会编号。",
         "local_note": "如果跟朋友约「在 Chorsu 见」，发摊位号是最准确的找人方式（巴扎有几百米深）。萝卜 / 香菜 / 葱蒜是中亚日常主菜。",
+        "location_hint": "塔什干 · Chorsu 巴扎蔬菜区（穹顶外、棚户区）",
     },
     {
         "id": "market.chorsu_onion_rastasi",
@@ -234,6 +248,7 @@ SELECTIONS: list[dict] = [
         "literal": "Rastasi = 一排/一列卖摊位（巴扎术语）",
         "context": "Chorsu 巴扎洋葱大蒜区。顶部红色横幅 RASTASI 是「（某品类）排区」的意思。1358 / 1359 是相邻两个摊位号。",
         "local_note": "rasta（拉丁）/ раста（西里尔）= 同一品类的整片销售区。问路时说「Piyoz rastasi qayerda?」（洋葱区在哪？），比说品名清楚。",
+        "location_hint": "塔什干 · Chorsu 巴扎洋葱大蒜「rastasi」排区",
     },
     {
         "id": "market.chorsu_navat_candy",
@@ -247,6 +262,7 @@ SELECTIONS: list[dict] = [
         "literal": "Navat = 蔗糖结晶块（突厥-波斯传统甜品）",
         "context": "Chorsu 巴扎的甜食/干果区。前景是琥珀色透明的结晶糖（Navat / нават），是泡茶的伴侣，给客人 / 病人 / 老人吃的。",
         "local_note": "买 navat 要挑大块通透、咬一口脆响的。塔什干本地价 30-40k sum/kg。中亚人喝茶不放白糖、只放 navat。",
+        "location_hint": "塔什干 · Chorsu 巴扎甜食 / 干果区",
     },
     {
         "id": "market.chorsu_ceramics_suzani",
@@ -260,6 +276,7 @@ SELECTIONS: list[dict] = [
         "literal": "—",
         "context": "Chorsu 巴扎工艺品区。陶盘上的几何/植物纹是 Rishton（费尔干纳）出产的传统瓷。背景挂的布是苏扎尼（suzani）刺绣。",
         "local_note": "纪念品三件套：Rishton 陶盘、Bukhara 银饰、Samarkand 纸。这里价比博物馆店便宜 40-60%，但要会 mol bozor（议价）。",
+        "location_hint": "塔什干 · Chorsu 巴扎工艺品 / 苏扎尼摊位",
     },
     {
         "id": "market.talitskoye_moloko_aprel",
@@ -273,6 +290,7 @@ SELECTIONS: list[dict] = [
         "literal": "Талицкое = 品牌名（地名形容词）, молоко = 牛奶, АПРЕЛЬ = 四月",
         "context": "俄罗斯/独联体街角双店：右边蓝色是奶制品店（Талицкое 是俄罗斯本土乳品品牌），左边绿色是连锁药店 Аптека Апрель。",
         "local_note": "молоко（milk）/ хлеб（bread）/ мясо（meat）这种基础店招要一眼认。塔什干的小区角落也有类似复合店——奶+药+小卖部三合一。",
+        "location_hint": "俄罗斯街角双店 · 非 UZ，但塔什干小区角落复合店外观近似",
     },
 
     # ========= RESTAURANT (6) =========
@@ -288,6 +306,7 @@ SELECTIONS: list[dict] = [
         "literal": "Бизнес-ланч = business lunch；с ... до ... = 从 ... 到 ...",
         "context": "俄罗斯 / 独联体餐厅常见的午餐菜单结构。「Холодные закуски」= 冷盘；「Супы」= 汤；「Горячие блюда」= 热菜；「Гарнир」= 主食/配菜。",
         "local_note": "塔什干很多餐厅都有 бизнес-ланч 套餐，约 25-40k sum 三道菜，比单点便宜一半。卡片里出现的几个菜：салат / суп-лапша / шашлык 都是中亚常见。",
+        "location_hint": "俄罗斯 / 独联体某餐厅 · 非 UZ 拍摄，但塔什干 бизнес-ланч 菜单结构一致",
     },
     {
         "id": "restaurant.crystal_garden_hotel",
@@ -301,6 +320,7 @@ SELECTIONS: list[dict] = [
         "literal": "—",
         "context": "塔什干 Amir Temur 大道上的高端餐厅。塔什干新酒店区，餐厅命名几乎全部直接用英文/拉丁——目标客户是涉外。",
         "local_note": "Amir Temur Shoh Ko'chasi 是塔什干主商业街，看到拉丁招牌占多数 = 进入了高端涉外区。本地小店多在背街，认招牌更需要 UZ Cyrillic 功底。",
+        "location_hint": "塔什干 · Amir Temur 大道 City Palace 酒店内",
     },
     {
         "id": "restaurant.azerbaijani_cuisine",
@@ -314,6 +334,7 @@ SELECTIONS: list[dict] = [
         "literal": "国名 + cuisine（菜系）",
         "context": "塔什干常见的「他国菜系」餐厅。门口插的是阿塞拜疆国旗 + 乌兹别克斯坦国旗。",
         "local_note": "塔什干吃饭多元：阿塞拜疆 / 格鲁吉亚 / 鞑靼 / 韩国（Koryo-saram）/ 维吾尔菜都有专门馆子。看见外国国旗 = 这家是异国菜。",
+        "location_hint": "塔什干 · 某阿塞拜疆菜馆门口（双国旗辨菜系）",
     },
     {
         "id": "restaurant.deyfendi_kebab_house",
@@ -327,6 +348,7 @@ SELECTIONS: list[dict] = [
         "literal": "Beyefendi（土耳其语：先生 / sir）",
         "context": "塔什干热门土耳其连锁烤肉店。门窗内是 LED 菜单：lamb chop / lamb sho'rva / meatball with cheese 等英文菜名。",
         "local_note": "土耳其菜在塔什干极流行——同源突厥文化、味道也接近本地 shashlik。Beyefendi / Edoy / Bahor 三大连锁都不错。",
+        "location_hint": "塔什干 · Beyefendi 土耳其烤肉连锁某分店",
     },
     {
         "id": "restaurant.central_asian_plov_centre",
@@ -340,6 +362,7 @@ SELECTIONS: list[dict] = [
         "literal": "Plov = 抓饭（乌兹别克国菜）",
         "context": "Yunusabad 区的中亚抓饭中心，每天上午 11:00-14:00 开门，卖完即止。师傅当场从巨型大锅 (kazan) 给你盛 plov。",
         "local_note": "塔什干吃 plov 必须中午去——下午 1-2 点最热闹也最新鲜。本地价 20-30k sum 一份。点单只说「plov bir»（plov 一份），不用菜单。",
+        "location_hint": "塔什干 · Yunusabad 区中亚抓饭中心（Markaziy Osiyo Plov Markazi）",
     },
     {
         "id": "restaurant.chaikhana_doppa_elder",
@@ -353,6 +376,7 @@ SELECTIONS: list[dict] = [
         "literal": "choy（茶）+ xona（屋）= 茶屋",
         "context": "茶馆（choyxona / chaikhana）的典型场景：老者戴 doppa（黑白方帽）穿 chapan（长袍）。这种地方是「准餐厅」——主要喝茶、配 plov 或 shashlik。",
         "local_note": "茶馆没有招牌也能认：白墙、雕花门、户外有炕床的「topchan」（围坐喝茶的木台子）就是。男性社交场所，女性可以进但不常去。",
+        "location_hint": "乌兹别克斯坦某 choyxona 茶馆内（老者着 chapan 戴 doppa）",
     },
 
     # ========= PUBLIC (6) =========
@@ -368,6 +392,7 @@ SELECTIONS: list[dict] = [
         "literal": "Центральная（中央的）+ Аптека（药店）",
         "context": "纽约布鲁克林 Brighton Beach 俄罗斯人聚居区的连锁药店。Аптека 字体是俄/独联体药店通用的「白衬线大写」。",
         "local_note": "在塔什干认 Аптека 这个词最重要——五金店 / 药店 / 杂货店外观相似，唯有「АПТЕКА」+ 绿色十字是药店标识。乌兹别克语拉丁拼写也是 Apteka。",
+        "location_hint": "美国纽约布鲁克林 Brighton Beach · 非 UZ，АПТЕКА 字形 + 衬线大写示范",
     },
     {
         "id": "public.veterinary_pharmacy_neon",
@@ -381,6 +406,7 @@ SELECTIONS: list[dict] = [
         "literal": "Ветеринарная = 兽医的 + Аптека = 药店；招牌两侧蓝猫、红狗霓虹",
         "context": "西伯利亚 Novosibirsk 的兽医药店。如果你 / 同伴带宠物去 UZ 旅行，看到这种招牌就是宠物药店。开门时间「10-21」= 10:00-21:00。",
         "local_note": "在 UZ 兽医药店没俄罗斯这么常见，但塔什干 Yunusabad、Mirzo Ulug'bek 区都有。带宠物入境 UZ 需提前 14 天兽医证 + 微芯片。",
+        "location_hint": "俄罗斯西伯利亚 Novosibirsk · 非 UZ，兽医药店 Ветеринарная 字眼示范",
     },
     {
         "id": "public.finnish_russian_border_pharmacy",
@@ -394,6 +420,7 @@ SELECTIONS: list[dict] = [
         "literal": "АПТЕКА（俄语）= APTEEKKI（芬兰语，注意双 E、双 K）",
         "context": "俄罗斯-芬兰 Torfyanovka 关口的药店。窗户上同时贴俄语「АПТЕКА」和芬兰语「APTEEKKI」——便利两国旅客。",
         "local_note": "认 АПТЕКА 的窍门：俄语和乌兹别克语拉丁拼写都是这个词，跨整个独联体 + 巴尔干都通用。绿色十字 + 这五个字母 = 100% 是药店。",
+        "location_hint": "俄罗斯 / 芬兰 Torfyanovka 边境关口 · 非 UZ，АПТЕКА vs APTEEKKI 双语对照",
     },
     {
         "id": "public.village_pharmacy_deer",
@@ -407,6 +434,7 @@ SELECTIONS: list[dict] = [
         "literal": "АПТЕКА = 药店",
         "context": "乌克兰 Voronkivtsi 村的小镇药店。竖排红字 АПТЕКА 是苏联沿用至今的最简招牌设计：木门、油漆铁字、两侧鹿雕。",
         "local_note": "如果你去塔什干周边小镇（Chimgan, Khiva 老城外），药店都长这样：低调、字立排在门旁。营业时间常被手写贴纸覆盖在玻璃上。",
+        "location_hint": "乌克兰 Voronkivtsi 村 · 非 UZ，但塔什干周边小镇药店外观神似",
     },
     {
         "id": "public.modern_chain_zhivika",
@@ -420,6 +448,7 @@ SELECTIONS: list[dict] = [
         "literal": "Аптеки = 复数形式（多家分店）; Живика = 品牌名（直译「活泉」）",
         "context": "西伯利亚 Tyumen 的连锁药店店面。这是 UZ 之外的俄罗斯连锁招牌，但你在塔什干会看到几乎一模一样的设计：绿底白字 + 十字 + 二维码。",
         "local_note": "塔什干本地连锁药店是 \"Apteka.uz\"、\"Doridarmon\"、\"NEO\"。招牌风格雷同，认绿色十字最快——夜晚也亮。",
+        "location_hint": "俄罗斯西伯利亚 Tyumen · 非 UZ，但塔什干 Apteka.uz / Doridarmon 招牌风格雷同",
     },
     {
         "id": "public.rural_apteka_117",
@@ -433,6 +462,7 @@ SELECTIONS: list[dict] = [
         "literal": "АПТЕКА + №（编号）+ 117",
         "context": "俄罗斯西伯利亚乡村药店。蓝色木屋 + 木栅栏 + 牌匾，是苏联国营药店分布编号系统的遗存。",
         "local_note": "在塔什干你不会看到 № 这种编号药店（已民营化）。但「№」（俄语「编号」缩写）= 乌兹别克语拉丁「№」/ 西里尔「№」，所有公文还在用。",
+        "location_hint": "俄罗斯西伯利亚乡村 · 非 UZ，编号药店是苏联国营遗存符号",
     },
 ]
 
@@ -464,10 +494,14 @@ def main() -> int:
         manifest = json.load(f)
 
     # 把 manifest 平铺成 by-local_path 索引
+    # 兼容历史 manifest：staging 目录从 public/signs/_staging/ 迁到 scripts/.signs-staging/
     by_path: dict[str, dict] = {}
     for cat, entries in manifest.items():
         for e in entries:
-            by_path[e["local_path"]] = e
+            lp = e["local_path"]
+            if lp.startswith("public/signs/_staging/"):
+                lp = lp.replace("public/signs/_staging/", "scripts/.signs-staging/", 1)
+            by_path[lp] = e
 
     signs_json: list[dict] = []
     converted = 0
@@ -513,7 +547,7 @@ def main() -> int:
             "context": sel["context"],
         }
         # 可选字段（None 不输出）
-        for k in ("ru", "ru_translit", "uz_latin", "uz_cyrillic", "literal", "local_note"):
+        for k in ("ru", "ru_translit", "uz_latin", "uz_cyrillic", "literal", "local_note", "location_hint"):
             v = sel.get(k)
             if v:
                 sign[k] = v

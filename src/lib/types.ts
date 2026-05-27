@@ -166,4 +166,8 @@ export interface Sign {
   context: string;
   /** 塔什干 / 乌兹别克斯坦本地细节（可选） */
   local_note?: string;
+  /** 拍摄地点提示（可选）—— 给「图寻」味儿。
+   *  UZ 本土的图：「塔什干 · Chorsu 巴扎肉区」、「塔什干地铁 Mustaqillik 站」等
+   *  非 UZ 的图：「美国 Brighton Beach 俄裔区 · 非 UZ，纯字形示范」 */
+  location_hint?: string;
 }

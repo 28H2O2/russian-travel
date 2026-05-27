@@ -79,6 +79,12 @@ const licenseShort = sign.image.attribution.license;
 
   {/* —— 上下文 —— */}
   <div class="px-4 md:px-5 py-4 flex flex-col gap-2">
+    {sign.location_hint && (
+      <p class="sign-location text-xs leading-snug">
+        <span class="sign-location-icon" aria-hidden="true">📍</span>
+        <span class="sign-location-text">{sign.location_hint}</span>
+      </p>
+    )}
     <p class="text-xs text-ink-soft leading-relaxed">
       <span class="text-[0.6rem] font-sans uppercase tracking-widest text-muted mr-2">
         何时看到
@@ -167,5 +173,29 @@ const licenseShort = sign.image.attribution.license;
   }
   .sign-uz-sep {
     color: var(--muted);
+  }
+
+  /* 拍摄地点 hint —— 给「图寻」味儿，独立小行，淡背景 */
+  .sign-location {
+    display: inline-flex;
+    align-items: baseline;
+    gap: 0.35rem;
+    padding: 0.3rem 0.55rem;
+    border-radius: 6px;
+    background: var(--paper-soft);
+    color: var(--ink-soft);
+    align-self: flex-start;
+    max-width: 100%;
+  }
+  .sign-location-icon {
+    flex-shrink: 0;
+    font-size: 0.85rem;
+    line-height: 1;
+  }
+  .sign-location-text {
+    font-family: ui-sans-serif, system-ui, sans-serif;
+    font-size: 0.7rem;
+    line-height: 1.35;
+    letter-spacing: 0.01em;
   }
 </style>

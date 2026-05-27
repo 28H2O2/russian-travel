@@ -58,6 +58,7 @@ export interface Sign {
   literal?: string;
   context: string;
   local_note?: string;
+  location_hint?: string;  // 拍摄地点（给「图寻」味儿），如「塔什干 · Chorsu 巴扎肉区」/「非 UZ，字形示范」
 }
 ```
 
@@ -129,6 +130,7 @@ export interface Sign {
 │  到达 / 抵港          (中)       │
 │  (字面：动词 прилететь 的名词)   │
 ├─────────────────────────────────┤
+│  📍 塔什干 TAS · 国际出发候机区  │  ← location_hint（淡背景小块）
 │  何时看到：机场出关方向...        │
 │  当地注：塔什干 TAS 通常三语...  │
 └─────────────────────────────────┘
@@ -174,6 +176,7 @@ npm run build
 - 至少有 `ru` 或 `uz_latin` 其中之一（识字目标不可缺）
 - `chinese` / `context` 必填
 - `local_note` 强烈建议（这是和 Card / UzbekCard 一致的"乌兹别克斯坦本地视角"）
+- `location_hint` 强烈建议——一句拍摄地点，给「图寻」味儿。UZ 本土的写「塔什干 · Chorsu 巴扎肉区」/「塔什干地铁 Mustaqillik 站」，非 UZ 的标明国家 + 「非 UZ，字形示范」
 
 8 月实地补拍图入库的流程：
 1. 用 iPhone 拍 jpg → 邮件给自己 / iCloud → 落地到 macOS `/tmp/`
