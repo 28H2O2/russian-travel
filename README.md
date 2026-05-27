@@ -6,6 +6,7 @@
 
 项目约定：[`CLAUDE.md`](./CLAUDE.md)
 卡片 schema：[`docs/card-schema.md`](./docs/card-schema.md)
+路牌识字：[`docs/sign-feature.md`](./docs/sign-feature.md)
 在线：<https://russian-travel-tau.vercel.app>
 
 ## 快速开始
@@ -24,28 +25,30 @@ npm run check        # astro check (TypeScript)
 - ✅ **W2 完成** 100 张 v1 内容（4 场景 × 25）+ Edge TTS 200 个真发音 mp3 + IndexedDB 进度 + SM-2 SRS + JSON 导入导出
 - ✅ **W3 完成（提前）** PWA service worker + 离线音频预缓存 + manifest + 全套图标 → v1 上线
 - ✅ **W4-6 主体完成** v2 扩到 230 张俄语卡（8 场景齐全）+ 15 张乌兹别克语礼貌包彩蛋（/uzbek 独立页 + uz-UZ TTS） → **v2 上线**
+- ✅ **路牌识字** 30 张真实塔什干 / 俄语国家招牌图（机场 / 街道 / 巴扎 / 餐厅 / 公共标识），独立 `/signs` 页 · Wikimedia CC 来源 · 出发前混眼熟用
 - ⏳ **剩余 v2 待办**：现场反馈按钮（🚩）
 - ⏳ **W7-10** 用户进入纯学习期，旅行前掌握 80+ 张
 - ⏳ **8 月在路上** 现场标记错卡、Airbnb 房东扫一眼 Top 30
 
-## 四个页面
+## 五个页面
 
 | 路径 | 干什么 |
 |---|---|
-| `/` | 主页：8 场景 + 必备柜 + 230 张卡浏览；右上 彩蛋 / 练习 / 数据 入口；右下 FAB 显示"今日 N 张待复习" |
+| `/` | 主页：8 场景 + 必备柜 + 230 张卡浏览；右上 路牌 / 彩蛋 / 练习 / 数据 入口；右下 FAB 显示"今日 N 张待复习" |
 | `/practice` | SRS 练习：今日队列 → 翻面 → 3 按钮评分（忘了/一般/很会）。键盘空格翻面、1/2/3 评分；每日新卡上限 20 |
 | `/data` | 4 桶统计（未学/到期/学习中/已掌握）+ JSON 导入导出 + 危险区清空 |
 | `/uzbek` 🇺🇿 | 彩蛋页：15 句乌兹别克语礼貌包（招呼 / 谢谢 / 餐桌 / 巴扎）。不进 SRS，纯文化加分项；每张卡的核心字段是 `why_uzbek`——为什么不说俄语要说这句 |
+| `/signs` 🪧 | 路牌识字：30 张真实招牌图（机场 / 街道地铁 / 巴扎 / 餐厅 / 公共标识）。被动识别训练——出发前过一遍混眼熟。不进 SRS、所有图片来自 Wikimedia Commons CC 并附作者署名 |
 
 ## 目录
 
 ```
 src/
-├── data/                   # cards.json / scenes.json / uzbek.json — 唯一内容真理
-├── components/             # Card / SceneSection / EssentialBar / AudioButton / PolitenessBadge / UzbekCard
+├── data/                   # cards.json / scenes.json / uzbek.json / signs.json — 唯一内容真理
+├── components/             # Card / SceneSection / EssentialBar / AudioButton / PolitenessBadge / UzbekCard / SignCard
 ├── layouts/Layout.astro    # 全站外壳（含 PWA / iOS meta）
 ├── lib/
-│   ├── types.ts            # Card / Scene / UzbekCard 类型
+│   ├── types.ts            # Card / Scene / UzbekCard / Sign 类型
 │   ├── data.ts             # cards.json 访问层
 │   ├── srs.ts              # SM-2 算法 + 队列 + bucketize（纯函数）
 │   ├── db.ts               # IndexedDB 薄封装（progress + meta + 每日新卡上限）
@@ -54,11 +57,13 @@ src/
 │   ├── index.astro         # 主页
 │   ├── practice.astro      # SRS 练习
 │   ├── data.astro          # 统计 + 备份
-│   └── uzbek.astro         # 🇺🇿 乌兹别克语彩蛋
+│   ├── uzbek.astro         # 🇺🇿 乌兹别克语彩蛋
+│   └── signs.astro         # 🪧 路牌识字
 └── styles/global.css       # 所有 design tokens（CSS 变量）
 
 public/
 ├── audio/                  # 460 个俄语 mp3 + 30 个乌兹别克语 mp3（慢/正常）
+├── signs/                  # 30 张真实招牌 webp（airport / street / market / restaurant / public）
 ├── favicon.svg
 ├── icon-{192,512,512-maskable,apple-touch}.png
 
@@ -68,10 +73,13 @@ scripts/
 ├── generate-icons.mjs      # sharp 把 favicon.svg 光栅化为 PWA 图标
 ├── expand-cards-v1.py      # 一次性：把 cards 从 20 张扩到 100 张（原稿）
 ├── expand-cards-v2.py      # 一次性：把 cards 从 100 张扩到 230 张（原稿）
+├── fetch-signs.py          # 从 Wikimedia Commons 抓真实招牌候选 + 抓 attribution
+├── build-signs.py          # 把候选 jpg 转 webp + 写 signs.json（含手工挑选清单）
 └── generate-silent-stubs.sh  # 已退役：W1 用过的 silent beep；保留作 TTS 失联应急
 
 docs/
-└── card-schema.md          # 卡片字段契约（Card；uzbek schema 在 src/lib/types.ts）
+├── card-schema.md          # 卡片字段契约（Card；uzbek schema 在 src/lib/types.ts）
+└── sign-feature.md         # 路牌识字 feature 文档（pipeline / license / 维护）
 ```
 
 ## 改东西的入口
@@ -80,6 +88,7 @@ docs/
 |---|---|
 | 俄语卡片内容 | `src/data/cards.json` （改 data、不改组件） |
 | 乌兹别克彩蛋 | `src/data/uzbek.json` |
+| 路牌识字内容 / 换图 / 加 attribution | `scripts/build-signs.py` 的 SELECTIONS → 重跑写出 `src/data/signs.json` |
 | 场景顺序 / 颜色名 / 目标卡片数 | `src/data/scenes.json` |
 | 色板、字体、卡片圆角阴影 | `src/styles/global.css` 的 `:root` 变量 |
 | 卡面布局 | `src/components/Card.astro` |
@@ -110,10 +119,10 @@ uv run --with edge-tts python3 scripts/generate-tts.py   # 只重跑失败那几
 
 ## 离线 / PWA
 
-- 部署后首次打开 → service worker 预缓存全部 HTML / JS / CSS / 图标 / 字体 / 490 个 mp3（约 9 MB）
+- 部署后首次打开 → service worker 预缓存全部 HTML / JS / CSS / 图标 / 字体 / 490 个 mp3 / 30 张招牌 webp（约 12 MB）
 - 手机 Safari/Chrome：分享 → "添加到主屏幕"
 - 主屏图标启动 → standalone 全屏
-- 飞行模式可用：230 俄语卡 + 15 乌兹别克语彩蛋 + 全部音频 + SRS 进度
+- 飞行模式可用：230 俄语卡 + 15 乌兹别克语彩蛋 + 30 张路牌图 + 全部音频 + SRS 进度
 
 ## 设计原则（不可妥协）
 

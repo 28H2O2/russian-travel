@@ -26,3 +26,8 @@ pnpm-debug.log*
 
 # audio scratch (生成中的大文件)
 scripts/.tts-cache/
+
+# /signs 内容生产中间产物（fetch-signs.py 抓的候选图、未挑选的）
+# 入仓的是 build-signs.py 处理后的 public/signs/<category>/*.webp，
+# 不是 staging 里的原图（节省仓库空间、保持 commit 干净）
+scripts/.signs-staging/

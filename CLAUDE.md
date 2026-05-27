@@ -10,9 +10,10 @@
 ## 不可妥协的产品红线
 
 1. **手机优先**——所有视觉、交互、性能决策以手机竖屏为第一目标。PC 上能用是副产品。
-2. **离线必达**——所有卡片 + 所有音频 + SRS 进度，飞行模式下完整可用。
+2. **离线必达**——所有卡片 + 所有音频 + 所有招牌图 + SRS 进度，飞行模式下完整可用。
 3. **零账号、零收集**——保留 Ogden 站的"无注册、不收集任何信息"精神。
 4. **deadline 大于 scope**——v1 必须 week 3 上线（不晚于 2026-06-15）。不够的卡片砍内容、不砍 deadline。
+5. **图片版权干净**——所有招牌图必须来自 CC 兼容协议（CC0 / PD / CC-BY / CC-BY-SA），且在卡面**可见**显示作者 + 协议名 + 链回原图页。找不到合规授权的图宁可空着。
 
 ---
 
@@ -69,13 +70,15 @@
 
 ## 目录约定
 
-- `src/data/` —— 内容真理（cards.json / scenes.json / uzbek.json）
+- `src/data/` —— 内容真理（cards.json / scenes.json / uzbek.json / signs.json）
 - `src/components/` —— Astro 组件
 - `src/lib/` —— 纯 TS 模块（SRS / IndexedDB / 音频预下载 / 进度导入导出）
-- `src/pages/` —— 路由页面
+- `src/pages/` —— 路由页面（index / practice / data / uzbek / signs）
 - `public/audio/` —— 预生成的所有 mp3
+- `public/signs/<category>/` —— 路牌识字模块的最终 webp 图（30 张），每张都对应 signs.json 中的一条 attribution
 - `scripts/` —— 一次性内容生产与音频生成脚本（不进 PWA bundle）
-- `docs/` —— AI-人共读的文档体系（card-schema.md、content-pipeline.md、uzbekistan-notes.md 等）
+- `scripts/.signs-staging/` —— 路牌图候选 + manifest（gitignored，不入仓不入 dist）
+- `docs/` —— AI-人共读的文档体系（card-schema.md、sign-feature.md、content-pipeline.md 等）
 
 ---
 
@@ -85,10 +88,12 @@
 - ✅ W2 (6/2 - 6/8): 100 张 v1 内容 + Edge TTS + IndexedDB + SM-2 + JSON 导入导出
 - ✅ W3 (6/9 - 6/15): PWA + 离线音频预缓存 + 移动端打磨 → **v1 已上线（提前）**
 - ✅ W4-6 主体完成: v2 230 张俄语卡 + 15 张 Uzbek 彩蛋（/uzbek 独立页 + uz-UZ TTS） → **v2 已上线（提前）**
+- ✅ SIGN.v1 路牌识字 /signs：30 张真实招牌图（Wikimedia CC，5 类）+ SignCard 组件 + 主页入口
   - 剩余 v2 待办：现场反馈 🚩 按钮
 - ⏳ W7-10 (7/7 - 8/3): 用户进入纯学习期
+- ⏳ SIGN.v1.1 / SIGN.v2 (8 月在路上): 实地补拍 TAS 机场内部 / ВЫХОД / WC / 街头警察岗亭 / 消防出口
 
-> 截至 2026-05-27：W1/W2/W3/W4-6 主体完成，部署在 <https://russian-travel-tau.vercel.app>。
+> 截至 2026-05-27：W1/W2/W3/W4-6 + 路牌识字 v1 主体完成，部署在 <https://russian-travel-tau.vercel.app>。
 
 ---
 
@@ -99,4 +104,6 @@
 - 内容生产相关脚本放 `scripts/`，不污染 `src/`
 - 跑 dev / build 后必须自查：手机视口下能否一眼看到卡片三行（cyrillic / 音译 / 中文），西里尔字母字体是否可读，重音 mark 是否对齐
 - LLM 生成的卡片必须保留 `verification_status: ai_generated_unreviewed`，不许偷偷标 verified
+- 改路牌内容（图 / 文字 / attribution）优先改 `scripts/build-signs.py` 的 SELECTIONS 然后重跑——不要手改 signs.json
+- 加新招牌图必须经过 fetch-signs.py 流水线（保留 attribution）或来自用户自拍（标 author = 自己）
 

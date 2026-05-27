@@ -10,17 +10,27 @@ import EssentialBar from '../components/EssentialBar.astro';
 import SceneSection from '../components/SceneSection.astro';
 import { getScenes, getCardsByScene, getEssentialCards, getCards } from '../lib/data';
 import uzbekJson from '../data/uzbek.json';
+import signsJson from '../data/signs.json';
 
 const scenes = getScenes();
 const essentials = getEssentialCards(10);
 const totalCards = getCards().length;
 const v2Total = scenes.reduce((sum, s) => sum + s.v2_target, 0);
 const uzbekCount = (uzbekJson as unknown[]).length;
+const signsCount = (signsJson as unknown[]).length;
 ---
 
 <Layout>
   {/* 右上角工具条：手机 emoji-only、≥sm 才显文字 */}
   <div class="fixed top-3 right-3 z-30 flex gap-1.5 safe-pt">
+    <a
+      href="/signs"
+      class="home-tool-link home-tool-signs"
+      aria-label="路牌识字"
+    >
+      <span class="home-tool-icon">🪧</span>
+      <span class="home-tool-text">路牌</span>
+    </a>
     <a
       href="/uzbek"
       class="home-tool-link home-tool-uzbek"
@@ -59,8 +69,9 @@ const uzbekCount = (uzbekJson as unknown[]).length;
       俄语生存包 · 给乌兹别克斯坦旅行者
     </p>
     <p class="mt-4 text-xs md:text-sm text-muted max-w-2xl mx-auto leading-relaxed">
-      {totalCards} / {v2Total} 张俄语短语卡 · +
+      {totalCards} / {v2Total} 张俄语短语卡 ·
       <a href="/uzbek" class="underline hover:text-accent">{uzbekCount} 句乌兹别克语彩蛋 🇺🇿</a> ·
+      <a href="/signs" class="underline hover:text-accent">{signsCount} 张真实路牌 🪧</a><br />
       含发音、对方可能的回话、可替换槽、Uzbekistan 当地注脚 · 离线可用 · 无注册无收集
     </p>
   </header>

@@ -110,3 +110,60 @@ export interface UzbekCard {
   context: string;               // 何时 / 对谁 / 什么场景用
   why_uzbek: string;             // ★ 彩蛋专属——用这句而非俄语的效果
 }
+
+/* ============================================================ */
+/* Sign 路牌识字卡片 schema —— 独立于 Card / UzbekCard           */
+/* ============================================================ */
+
+/**
+ * 路牌识字卡片。
+ *
+ * 与 Card 的差异：
+ *   - 不是用来「说」的，是用来「认」的——被动识别任务
+ *   - 主信息是图（真实招牌照片），不是 audio
+ *   - 必须有完整 attribution（CC-BY/CC-BY-SA 强制要求显示作者 / 协议）
+ *   - 不进 SRS（不同认知任务，复习曲线会怪）
+ *   - 一张招牌可能同时含俄语 + 乌兹别克语，所以 ru/uz_latin/uz_cyrillic 都可选
+ */
+export type SignCategory = 'airport' | 'street' | 'market' | 'restaurant' | 'public';
+
+export interface SignAttribution {
+  /** 作者署名，如 'Francisco Anzola' 或 'User:Bobyrr' */
+  author: string;
+  /** 该图在 Commons / Flickr 的原始页面 URL */
+  source_url: string;
+  /** 协议名，如 'CC-BY-SA-4.0' / 'CC-BY-2.0' / 'Public Domain' */
+  license: string;
+  /** 来源平台，如 'Wikimedia Commons' / 'Flickr' */
+  via?: string;
+}
+
+export interface Sign {
+  /** 'airport.arrivals' 等 */
+  id: string;
+  category: SignCategory;
+
+  image: {
+    /** '/signs/airport/arrivals.webp' */
+    src: string;
+    /** 屏幕阅读器 / SEO 用，简短描述招牌内容 */
+    alt: string;
+    attribution: SignAttribution;
+  };
+
+  /** 招牌上实际出现的文字。一张牌可能有多语并存——以下三个字段都可选。
+   *  但 ru 与 uz_latin 至少要有其中之一，否则就没有「识字」对象了。 */
+  ru?: string;                   // 俄语西里尔，如 'Прилёт'（带重音可选）
+  ru_translit?: string;          // 发音式拼音，如 'PRI-lyot'
+  uz_latin?: string;             // 乌兹别克语拉丁，如 'Kelish'
+  uz_cyrillic?: string;          // 乌兹别克语西里尔，如 'Келиш'
+
+  /** 中文意思——必填 */
+  chinese: string;
+  /** 字面拆分 / 词源小注（可选） */
+  literal?: string;
+  /** 哪里会看到、看到了该干嘛 */
+  context: string;
+  /** 塔什干 / 乌兹别克斯坦本地细节（可选） */
+  local_note?: string;
+}

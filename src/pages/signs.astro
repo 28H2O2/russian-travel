@@ -1,0 +1,120 @@
+---
+// 功能：路牌识字页。30 张真实招牌图按 5 个 category 分组展示。
+//       不进 SRS、不带音频——纯被动识字训练。
+// 输入：src/data/signs.json
+// 输出：单页面 /signs
+// 依赖：Layout, SignCard, signs.json, types
+// 在项目中的作用：v2 之后追加的「眼睛通道」模块。补足现有 250 张短语卡只训练
+//             "说 / 听"、未训练"读懂招牌"的缺口。出发前过一遍混眼熟。
+
+import Layout from '../layouts/Layout.astro';
+import SignCard from '../components/SignCard.astro';
+import type { Sign, SignCategory } from '../lib/types';
+import signsJson from '../data/signs.json';
+
+const signs = signsJson as Sign[];
+
+const CATEGORY_META: Record<SignCategory, { name: string; icon: string; blurb: string }> = {
+  airport: {
+    name: '机场',
+    icon: '✈️',
+    blurb: '塔什干机场指示牌通常三语：俄 / 乌（拉丁）/ 英',
+  },
+  street: {
+    name: '街道 & 地铁',
+    icon: '🚏',
+    blurb: '地铁站名、路牌、过街——西里尔为主、年轻路段也有拉丁',
+  },
+  market: {
+    name: '超市 & 巴扎',
+    icon: '🛒',
+    blurb: 'Касса（收银）/ Скидка（打折）/ Bozor（市场）这些必须一眼认出',
+  },
+  restaurant: {
+    name: '餐厅 & 菜单',
+    icon: '🍽️',
+    blurb: '菜单上 Plov / Шашлык / Чай 等不会翻译，认形状最快',
+  },
+  public: {
+    name: '公共标识 & 应急',
+    icon: '⚠️',
+    blurb: 'Выход（出口）/ Аптека（药店）/ Не курить（禁烟）—— 关键时刻能救命',
+  },
+};
+
+const categoryOrder: SignCategory[] = ['airport', 'street', 'market', 'restaurant', 'public'];
+const grouped = categoryOrder.map((cat) => ({
+  cat,
+  meta: CATEGORY_META[cat],
+  cards: signs.filter((s) => s.category === cat),
+}));
+
+const totalSigns = signs.length;
+---
+
+<Layout
+  title="路牌识字 · 俄语生存包"
+  description="30 张真实塔什干 / 俄语国家招牌：从机场指示到巴扎价签，看图认字训练。"
+>
+  {/* 右上角返回 */}
+  <div class="fixed top-3 right-3 z-30 flex gap-2 safe-pt">
+    <a href="/" class="home-tool-link" aria-label="返回首页">← 返回</a>
+  </div>
+
+  {/* 头部 */}
+  <header class="max-w-3xl mx-auto px-4 pt-10 pb-6 md:pt-14 text-center">
+    <p class="text-xs font-sans uppercase tracking-[0.3em] text-muted mb-2">
+      🪧 SIGN LITERACY · READ THE STREET
+    </p>
+    <h1 class="font-serif text-3xl md:text-5xl font-bold text-ink leading-tight">
+      <span class="text-accent">读懂</span> 路牌
+    </h1>
+    <p class="mt-4 text-sm md:text-base text-ink-soft font-serif italic">
+      {totalSigns} 张真实招牌 · 从机场到巴扎
+    </p>
+    <p class="mt-5 text-xs md:text-sm text-muted max-w-2xl mx-auto leading-relaxed">
+      短语卡训练的是嘴和耳朵，但在塔什干 <strong>80% 的俄语接触来自眼睛</strong>：
+      地铁站名、菜单、机场指示牌、超市货架。这里收 30 张真实招牌照片，
+      出发前过一遍混眼熟。
+      <br />
+      <span class="block mt-3 text-[0.7rem] leading-relaxed">
+        所有图片来自 <strong>Wikimedia Commons</strong> 与 <strong>Flickr CC</strong>，
+        每张都附作者署名和协议。本页不进 SRS、不评分——只是看图认字。
+      </span>
+    </p>
+  </header>
+
+  {/* 主内容：按 category 分组 */}
+  <main class="max-w-5xl mx-auto px-4 pb-12">
+    {grouped.map(({ cat, meta, cards: catCards }) => (
+      <section class="mb-10" id={`sign-${cat}`}>
+        <div class="flex items-baseline gap-3 mb-1">
+          <span class="text-xl">{meta.icon}</span>
+          <h2 class="font-serif text-2xl font-bold text-ink">{meta.name}</h2>
+          <span class="text-xs text-muted ml-auto font-sans">{catCards.length} 张</span>
+        </div>
+        <p class="text-xs text-muted italic mb-4 ml-8">{meta.blurb}</p>
+        {catCards.length === 0 ? (
+          <p class="text-xs text-muted italic ml-8 py-4">
+            （这一类正在补图，回头见）
+          </p>
+        ) : (
+          <div class="grid gap-4 md:grid-cols-2">
+            {catCards.map((s) => <SignCard sign={s} />)}
+          </div>
+        )}
+      </section>
+    ))}
+  </main>
+
+  {/* 底部说明 */}
+  <footer class="max-w-3xl mx-auto px-4 py-12 text-xs font-sans text-muted text-center space-y-2 leading-relaxed">
+    <p>
+      ⚠ 部分招牌不一定来自塔什干本地——识字的目标是认出俄语 / 乌兹别克语字形，
+      而不是地理识别。8 月你到塔什干补拍的实景图会陆续替换进来。
+    </p>
+    <p>
+      所有图片授权信息见每张图右下角链接 · 跳转至 Wikimedia Commons / Flickr 原图页核验
+    </p>
+  </footer>
+</Layout>
