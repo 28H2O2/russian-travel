@@ -1,0 +1,212 @@
+[
+  {
+    "id": "uzbek.greeting.salom",
+    "category": "greeting",
+    "latin": "Salom!",
+    "pronunciation": "sa-LOM",
+    "chinese": "你好！（随意）",
+    "russian_equivalent": "Привет.",
+    "audio": {
+      "phrase_normal": "/audio/uzbek/uzbek_0001_normal.mp3",
+      "phrase_slow": "/audio/uzbek/uzbek_0001_slow.mp3"
+    },
+    "context": "对同龄人 / 朋友 / 任何场景的轻量招呼。",
+    "why_uzbek": "对俄语母语者也通；对乌兹别克族会立刻让对方眼睛一亮——『外国人会说本地话』。"
+  },
+  {
+    "id": "uzbek.greeting.assalomu",
+    "category": "greeting",
+    "latin": "Assalomu alaykum!",
+    "pronunciation": "as-sa-LO-mu a-LAY-kum",
+    "chinese": "您好！（穆斯林礼）",
+    "russian_equivalent": "Здра́вствуйте.",
+    "audio": {
+      "phrase_normal": "/audio/uzbek/uzbek_0002_normal.mp3",
+      "phrase_slow": "/audio/uzbek/uzbek_0002_slow.mp3"
+    },
+    "context": "正式场合 / 老一辈 / 清真寺 / 进店敬礼。",
+    "why_uzbek": "穆斯林标准问候——回应是 'Va alaykum assalom'（vah-a-LAY-kum a-sa-LOM）。说出这句意味你尊重当地文化，老一辈受用极了。"
+  },
+  {
+    "id": "uzbek.greeting.morning",
+    "category": "greeting",
+    "latin": "Xayrli tong!",
+    "pronunciation": "KHAYR-li TONG",
+    "chinese": "早上好！",
+    "russian_equivalent": "До́брое у́тро.",
+    "audio": {
+      "phrase_normal": "/audio/uzbek/uzbek_0003_normal.mp3",
+      "phrase_slow": "/audio/uzbek/uzbek_0003_slow.mp3"
+    },
+    "context": "白天 11 点前——民宿主人端早餐时这句最自然。",
+    "why_uzbek": "在民宿 / 民居场景里比 Доброе утро 更亲切，房东会自然切换到乌兹别克语聊几句。"
+  },
+  {
+    "id": "uzbek.greeting.day",
+    "category": "greeting",
+    "latin": "Xayrli kun!",
+    "pronunciation": "KHAYR-li KUN",
+    "chinese": "您好！（白天通用）",
+    "russian_equivalent": "До́брый день.",
+    "audio": {
+      "phrase_normal": "/audio/uzbek/uzbek_0004_normal.mp3",
+      "phrase_slow": "/audio/uzbek/uzbek_0004_slow.mp3"
+    },
+    "context": "11-18 点之间。",
+    "why_uzbek": "比 Salom 礼貌、比 Assalomu alaykum 轻松，是中性的甜点档。"
+  },
+  {
+    "id": "uzbek.greeting.evening",
+    "category": "greeting",
+    "latin": "Xayrli kech!",
+    "pronunciation": "KHAYR-li KECH",
+    "chinese": "晚上好！",
+    "russian_equivalent": "До́брый ве́чер.",
+    "audio": {
+      "phrase_normal": "/audio/uzbek/uzbek_0005_normal.mp3",
+      "phrase_slow": "/audio/uzbek/uzbek_0005_slow.mp3"
+    },
+    "context": "18 点后——晚餐入店 / 夜市。",
+    "why_uzbek": "夜市档主听到外国人说本地晚安，议价时心情都更好。"
+  },
+  {
+    "id": "uzbek.thanks.rahmat",
+    "category": "thanks",
+    "latin": "Rahmat!",
+    "pronunciation": "rah-MAT",
+    "chinese": "谢谢！",
+    "russian_equivalent": "Спаси́бо.",
+    "audio": {
+      "phrase_normal": "/audio/uzbek/uzbek_0006_normal.mp3",
+      "phrase_slow": "/audio/uzbek/uzbek_0006_slow.mp3"
+    },
+    "context": "所有场合通用，无可挑剔。",
+    "why_uzbek": "比 Спаси́бо 更能体现你尊重当地文化；店主 / 司机 / 服务员多半会以 'Arzimaydi'（不客气）回敬，对话立刻拉近一档。"
+  },
+  {
+    "id": "uzbek.thanks.big_thanks",
+    "category": "thanks",
+    "latin": "Katta rahmat!",
+    "pronunciation": "kat-TA rah-MAT",
+    "chinese": "非常感谢！",
+    "russian_equivalent": "Большо́е спаси́бо.",
+    "audio": {
+      "phrase_normal": "/audio/uzbek/uzbek_0007_normal.mp3",
+      "phrase_slow": "/audio/uzbek/uzbek_0007_slow.mp3"
+    },
+    "context": "对方帮了大忙——指路 / 救场 / 让位。",
+    "why_uzbek": "Katta 字面是 '大'，组合即 '大大的谢谢'。比俄语版本多一份手心向胸口的诚意。"
+  },
+  {
+    "id": "uzbek.thanks.xush_kelibsiz",
+    "category": "thanks",
+    "latin": "Xush kelibsiz!",
+    "pronunciation": "KHOOSH ke-LIB-siz",
+    "chinese": "欢迎！（您来真好）",
+    "russian_equivalent": "Добро́ пожа́ловать.",
+    "audio": {
+      "phrase_normal": "/audio/uzbek/uzbek_0008_normal.mp3",
+      "phrase_slow": "/audio/uzbek/uzbek_0008_slow.mp3"
+    },
+    "context": "餐厅 / 民宿 / 巴扎主人会先对你说。",
+    "why_uzbek": "被这样欢迎时只要回 'Rahmat!' 即可。反过来想欢迎乌兹别克朋友来中国，也是这句——情绪一致。"
+  },
+  {
+    "id": "uzbek.thanks.iltimos",
+    "category": "thanks",
+    "latin": "Iltimos.",
+    "pronunciation": "il-ti-MOS",
+    "chinese": "请。 / 拜托。",
+    "russian_equivalent": "Пожа́луйста.",
+    "audio": {
+      "phrase_normal": "/audio/uzbek/uzbek_0009_normal.mp3",
+      "phrase_slow": "/audio/uzbek/uzbek_0009_slow.mp3"
+    },
+    "context": "请求时句尾——'Suv, iltimos'（请来杯水）。",
+    "why_uzbek": "短促有力的礼貌词；服务场景里贴在句尾，比纯俄语开口听起来更柔。"
+  },
+  {
+    "id": "uzbek.food.bon_appetit",
+    "category": "food",
+    "latin": "Yoqimli ishtaha!",
+    "pronunciation": "yo-KIM-li ish-ta-HA",
+    "chinese": "祝您好胃口！",
+    "russian_equivalent": "Прия́тного аппети́та.",
+    "audio": {
+      "phrase_normal": "/audio/uzbek/uzbek_0010_normal.mp3",
+      "phrase_slow": "/audio/uzbek/uzbek_0010_slow.mp3"
+    },
+    "context": "上菜后 / 同桌开吃前——主人通常先说。",
+    "why_uzbek": "回敬 'Rahmat, sizga ham!'（谢谢，您也是）瞬间地道。这是 UZ 餐桌的标准入场仪式。"
+  },
+  {
+    "id": "uzbek.food.delicious",
+    "category": "food",
+    "latin": "Juda mazali!",
+    "pronunciation": "JU-da ma-za-LI",
+    "chinese": "真好吃！",
+    "russian_equivalent": "Очень вку́сно.",
+    "audio": {
+      "phrase_normal": "/audio/uzbek/uzbek_0011_normal.mp3",
+      "phrase_slow": "/audio/uzbek/uzbek_0011_slow.mp3"
+    },
+    "context": "厨师 / 主人 / 厨娘在场时。",
+    "why_uzbek": "对家庭餐厅厨娘说这句，常常换来一道送的菜或一杯免费茶；比俄语版本得分更高。"
+  },
+  {
+    "id": "uzbek.food.im_full",
+    "category": "food",
+    "latin": "Toʻydim.",
+    "pronunciation": "TOY-dim",
+    "chinese": "我吃饱了。",
+    "russian_equivalent": "Я нае́лся.",
+    "audio": {
+      "phrase_normal": "/audio/uzbek/uzbek_0012_normal.mp3",
+      "phrase_slow": "/audio/uzbek/uzbek_0012_slow.mp3"
+    },
+    "context": "主人继续添菜时——UZ 主人客观期待你吃到第三份。",
+    "why_uzbek": "俄语 'Я нае́лся' 说几次主人未必停手；用本地语 'Toʻydim' 一句对方就懂你真的撑不下了，这是终结技。"
+  },
+  {
+    "id": "uzbek.bazaar.how_much",
+    "category": "bazaar",
+    "latin": "Qancha?",
+    "pronunciation": "QAN-cha",
+    "chinese": "多少钱？",
+    "russian_equivalent": "Ско́лько сто́ит?",
+    "audio": {
+      "phrase_normal": "/audio/uzbek/uzbek_0013_normal.mp3",
+      "phrase_slow": "/audio/uzbek/uzbek_0013_slow.mp3"
+    },
+    "context": "巴扎 / 小摊问价。",
+    "why_uzbek": "在巴扎说这句，店家立刻判定你不是纯外国人——可能给比纯俄语开口更公道的初价。这是地道游客的暗号。"
+  },
+  {
+    "id": "uzbek.bazaar.cheaper",
+    "category": "bazaar",
+    "latin": "Arzonroq boʻladimi?",
+    "pronunciation": "ar-ZON-rok bo-la-di-MI",
+    "chinese": "便宜点行吗？",
+    "russian_equivalent": "Мо́жно деше́вле?",
+    "audio": {
+      "phrase_normal": "/audio/uzbek/uzbek_0014_normal.mp3",
+      "phrase_slow": "/audio/uzbek/uzbek_0014_slow.mp3"
+    },
+    "context": "巴扎议价中段。",
+    "why_uzbek": "议价时换乌兹别克语是大杀器——店家会带着笑意继续砍，气氛一下松弛，往往能再让 10-15%。"
+  },
+  {
+    "id": "uzbek.bazaar.ill_take",
+    "category": "bazaar",
+    "latin": "Olaman.",
+    "pronunciation": "o-la-MAN",
+    "chinese": "我要了。",
+    "russian_equivalent": "Я возьму́.",
+    "audio": {
+      "phrase_normal": "/audio/uzbek/uzbek_0015_normal.mp3",
+      "phrase_slow": "/audio/uzbek/uzbek_0015_slow.mp3"
+    },
+    "context": "议价收尾——决定下手时。",
+    "why_uzbek": "成交话——简短有力，店家会回 'Rahmat / Olib keting'（谢谢，拿走吧），这一刻你已经是半个本地人。"
+  }
+]
