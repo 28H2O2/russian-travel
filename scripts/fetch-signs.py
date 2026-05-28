@@ -3,14 +3,15 @@
 功能：从 Wikimedia Commons 抓真实路牌候选图（含俄语 / 乌兹别克语招牌）+ 完整 attribution
 输入：脚本内 QUERIES 列表（5 类场景，~15 个 query）
 输出：
-    public/signs/_staging/<query_slug>/img_NN.jpg  ——  候选图（最长边 ~800px）
-    public/signs/_staging/_manifest.json          ——  每张图的 attribution / license / source_url / desc
+    scripts/.signs-staging/<query_slug>/img_NN.jpg  ——  候选图（最长边 ~800px）
+    scripts/.signs-staging/_manifest.json           ——  每张图的 attribution / license / source_url / desc
+    （staging 放在 scripts/ 下而非 public/，避免被 Astro build 一并打包；.gitignored）
 如何运行：
     cd /Users/h2o2/Desktop/Project/Russian_travel
     python3 scripts/fetch-signs.py
 依赖：requests （pip install requests）
 在项目中的作用：路牌识字 /signs feature 的内容生产 Pipeline 阶段 1。
-    抓回来的图是候选——人工挑选阶段会从 _staging/ 中选出 30 张正式入库。
+    抓回来的图是候选——人工挑选阶段会从 scripts/.signs-staging/ 中选出 30 张正式入库。
 """
 
 from __future__ import annotations

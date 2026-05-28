@@ -1,11 +1,12 @@
 ---
 // 功能：路牌识字卡片。结构 = 真实招牌照片 + attribution + 招牌文字（俄语/乌兹别克语
-//       拉丁/西里尔多语并存）+ 中文 + context + local_note
+//       拉丁/西里尔多语并存）+ 中文 + literal + 📍 location_hint + context + local_note
 // 输入：sign prop (Sign 类型)，由 /signs 页面从 signs.json 派发
 // 输出：一个 <article> 带 category 主题色左边框
 // 依赖：lib/types
 // 在项目中的作用：/signs 路牌识字页的视觉单元。与 Card / UzbekCard 平级。
 //             不进 SRS、不带音频、所有信息平铺不折叠——出发前混眼熟用。
+//             location_hint 行（📍 淡背景小块）给路牌识字沾一点「图寻」味儿。
 
 import type { Sign } from '../lib/types';
 

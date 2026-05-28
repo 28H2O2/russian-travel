@@ -2,11 +2,13 @@
 """
 功能：将 _staging 候选图按手工选择转 webp + 移到正式目录 + 写 signs.json
 输入：
-    public/signs/_staging/_manifest.json
+    scripts/.signs-staging/_manifest.json  （由 fetch-signs.py 产出，gitignored）
     本脚本内嵌的 SELECTIONS 列表（人工挑选结果）
 输出：
     public/signs/<category>/<id>.webp
     src/data/signs.json
+注：历史上 staging 目录曾在 public/signs/_staging/，已迁至 scripts/.signs-staging/。
+    main() 里有兼容 shim，老 manifest 仍可读。
 如何运行：
     python3 scripts/build-signs.py
 依赖：cwebp（系统）, requests（python）
@@ -546,7 +548,8 @@ def main() -> int:
             "chinese": sel["chinese"],
             "context": sel["context"],
         }
-        # 可选字段（None 不输出）
+        # 可选字段（falsy 不输出——含 None / "" / 0 / False）
+        # 注：当前 SELECTIONS 用 None 表示"无"，明确空字符串也会被吞，需要时改 `if v is not None:`
         for k in ("ru", "ru_translit", "uz_latin", "uz_cyrillic", "literal", "local_note", "location_hint"):
             v = sel.get(k)
             if v:
